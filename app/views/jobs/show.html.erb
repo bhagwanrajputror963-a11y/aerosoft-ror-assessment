@@ -1,0 +1,22 @@
+<% content_for :title, "#{@job.title} | Flying Crews" %>
+
+<p><%= link_to "&laquo; Back to jobs".html_safe, jobs_path %></p>
+
+<div class="card">
+  <h1><%= @job.title %></h1>
+  <p class="job-meta">
+    <%= @job.company.name %> &middot; <%= @job.location %> &middot;
+    <span class="badge"><%= @job.job_type.titleize %></span>
+    <span class="badge"><%= @job.status.titleize %></span>
+    <% if @job.category.present? %><span class="badge"><%= @job.category %></span><% end %>
+  </p>
+  <% if @job.salary_min || @job.salary_max %>
+    <p><strong>Salary:</strong> ₹<%= @job.salary_min %> - ₹<%= @job.salary_max %></p>
+  <% end %>
+  <p><%= simple_format(@job.description) %></p>
+
+  <% if logged_in? && current_user.recruiter? && current_user.recruiter.id == @job.recruiter_id %>
+    <%= link_to "Edit", edit_job_path(@job) %>
+    <%= button_to "Delete", job_path(@job), method: :delete, data: { turbo_confirm: "Delete this job posting?" } %>
+  <% end %>
+</div>
