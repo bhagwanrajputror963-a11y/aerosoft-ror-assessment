@@ -1,0 +1,11 @@
+arjun:
+  user: candidate_one
+  headline: Commercial Pilot, 2500 flight hours
+  skills: Boeing 737, Airbus A320, CRM
+  experience_years: 5
+
+rina:
+  user: candidate_two
+  headline: Cabin Crew, 3 years experience
+  skills: Safety procedures, Customer service
+  experience_years: 3
