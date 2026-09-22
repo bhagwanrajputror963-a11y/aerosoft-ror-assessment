@@ -108,6 +108,25 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "Apply now", response.body
   end
 
+  test "show still displays applied status after the job closes (e.g. someone else got hired)" do
+    applications(:arjun_applies_first_officer).job.update!(status: :closed)
+    sign_in_as(users(:candidate_one))
+
+    get job_path(jobs(:first_officer))
+    assert_match "You applied", response.body
+    assert_no_match "Apply now", response.body
+    assert_no_match "no longer accepting applications", response.body
+  end
+
+  test "show hides Apply now and shows a closed message for a candidate who never applied" do
+    jobs(:cabin_crew).update!(status: :closed)
+    sign_in_as(users(:candidate_two)) # has not applied to cabin_crew
+
+    get job_path(jobs(:cabin_crew))
+    assert_no_match "Apply now", response.body
+    assert_match "no longer accepting applications", response.body
+  end
+
   test "recruiter can post a new job" do
     sign_in_as(users(:recruiter_one))
     assert_difference("Job.count", 1) do

@@ -23,6 +23,32 @@ class ApplicationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to job_path(jobs(:first_officer))
   end
 
+  test "candidate cannot apply to a closed job, redirected instead of shown the form" do
+    jobs(:cabin_crew).update!(status: :closed)
+    sign_in_as(users(:candidate_two))
+
+    get new_job_application_path(jobs(:cabin_crew))
+    assert_redirected_to job_path(jobs(:cabin_crew))
+
+    assert_no_difference("Application.count") do
+      post job_applications_path(jobs(:cabin_crew)), params: { application: { cover_letter: "x" } }
+    end
+  end
+
+  test "recruiter marking an applicant as hired closes the job for further applicants" do
+    sign_in_as(users(:recruiter_one))
+    application = applications(:arjun_applies_first_officer)
+
+    patch update_status_application_path(application), params: { status: "hired" }
+
+    assert application.job.reload.closed?
+
+    sign_in_as(users(:candidate_two))
+    assert_no_difference("Application.count") do
+      post job_applications_path(jobs(:first_officer)), params: { application: { cover_letter: "x" } }
+    end
+  end
+
   test "recruiter cannot apply to a job" do
     sign_in_as(users(:recruiter_one))
     assert_no_difference("Application.count") do
