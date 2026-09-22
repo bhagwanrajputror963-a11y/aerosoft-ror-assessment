@@ -1,0 +1,34 @@
+<% content_for :title, "Edit Profile | Flying Crews" %>
+<h1>Edit Profile</h1>
+<p class="job-meta">This is what recruiters see when you apply to a job.</p>
+
+<% if @candidate.errors.any? %>
+  <div class="error-list">
+    <strong><%= pluralize(@candidate.errors.count, "error") %> prevented this profile from saving:</strong>
+    <ul>
+      <% @candidate.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: @candidate, url: candidate_profile_path, method: :patch, local: true do |f| %>
+  <div class="field">
+    <%= f.label :headline, "Headline" %>
+    <%= f.text_field :headline, placeholder: "e.g. Commercial Pilot, 2500 flight hours" %>
+  </div>
+  <div class="field">
+    <%= f.label :skills %>
+    <%= f.text_area :skills, rows: 3, placeholder: "e.g. Boeing 737, Airbus A320, CRM" %>
+  </div>
+  <div class="field">
+    <%= f.label :experience_years, "Years of experience" %>
+    <%= f.number_field :experience_years, min: 0 %>
+  </div>
+  <div class="field">
+    <%= f.label :resume_url, "Resume link" %>
+    <%= f.url_field :resume_url, placeholder: "https://..." %>
+  </div>
+  <%= f.submit "Save profile" %>
+<% end %>

@@ -21,6 +21,15 @@ class DashboardsControllerTest < ActionDispatch::IntegrationTest
     assert_match candidates(:arjun).user.name, response.body
   end
 
+  test "recruiter dashboard shows applicant profile details" do
+    sign_in_as(users(:recruiter_one))
+    get dashboard_path
+    assert_match candidates(:arjun).headline, response.body
+    assert_match candidates(:arjun).skills, response.body
+    assert_match "5 years experience", response.body
+    assert_select %(a[href="#{candidates(:arjun).resume_url}"])
+  end
+
   test "applicants on a job are listed most recently applied first" do
     # Inserted in the OPPOSITE order from their created_at timestamps, so
     # this can't pass by accident against a plain (insertion-order) query —

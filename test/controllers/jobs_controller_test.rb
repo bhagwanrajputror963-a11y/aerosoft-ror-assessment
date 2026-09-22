@@ -104,6 +104,17 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
     assert_match jobs(:first_officer).title, response.body
   end
 
+  test "show displays the company's description when present" do
+    get job_path(jobs(:first_officer))
+    assert_match companies(:indigo).description, response.body
+  end
+
+  test "show omits the about-company section when the company has no description" do
+    companies(:indigo).update!(description: nil)
+    get job_path(jobs(:first_officer))
+    assert_no_match "About #{companies(:indigo).name}", response.body
+  end
+
   test "show offers Apply now to a candidate who has not applied yet" do
     sign_in_as(users(:candidate_two))
     get job_path(jobs(:first_officer))

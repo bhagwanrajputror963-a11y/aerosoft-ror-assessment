@@ -3,6 +3,7 @@
 
 <% case current_user.role %>
 <% when "candidate" %>
+  <p><%= link_to "Edit Profile", edit_candidate_profile_path, class: "btn btn-secondary btn-sm" %></p>
   <h2>Your applications</h2>
   <% if @applications.empty? %>
     <p>You haven't applied to any jobs yet.</p>
@@ -40,7 +41,13 @@
             <tbody>
               <% job.applications.each do |app| %>
                 <tr>
-                  <td><%= app.candidate.user.name %></td>
+                  <td>
+                    <strong><%= app.candidate.user.name %></strong>
+                    <% if app.candidate.headline.present? %><br><span class="job-meta"><%= app.candidate.headline %></span><% end %>
+                    <% if app.candidate.experience_years.present? %><br><span class="job-meta"><%= pluralize(app.candidate.experience_years, "year") %> experience</span><% end %>
+                    <% if app.candidate.skills.present? %><br><span class="job-meta">Skills: <%= app.candidate.skills %></span><% end %>
+                    <% if app.candidate.resume_url.present? %><br><%= link_to "View resume", app.candidate.resume_url, target: "_blank", rel: "noopener" %><% end %>
+                  </td>
                   <td><span class="badge"><%= app.status.titleize %></span></td>
                   <td>
                     <%= form_with url: update_status_application_path(app), method: :patch, local: true do |f| %>

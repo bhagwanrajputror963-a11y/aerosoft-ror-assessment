@@ -15,6 +15,11 @@
   <% end %>
   <p><%= simple_format(@job.description) %></p>
 
+  <% if @job.company.description.present? %>
+    <h2>About <%= @job.company.name %></h2>
+    <p><%= simple_format(@job.company.description) %></p>
+  <% end %>
+
   <% if logged_in? && (current_user.admin? || (current_user.recruiter? && current_user.recruiter.id == @job.recruiter_id)) %>
     <div class="actions">
       <%= link_to "Edit", edit_job_path(@job), class: "btn btn-secondary" %>

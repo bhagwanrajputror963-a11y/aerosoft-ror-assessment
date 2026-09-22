@@ -29,4 +29,23 @@ class CandidateTest < ActiveSupport::TestCase
   test "jobs are reachable through applications" do
     assert_includes candidates(:arjun).jobs, jobs(:first_officer)
   end
+
+  test "valid with a blank resume_url" do
+    candidate = candidates(:arjun)
+    candidate.resume_url = ""
+    assert candidate.valid?
+  end
+
+  test "invalid with a malformed resume_url" do
+    candidate = candidates(:arjun)
+    candidate.resume_url = "not a url"
+    assert_not candidate.valid?
+    assert_includes candidate.errors[:resume_url], "is invalid"
+  end
+
+  test "valid with a well-formed resume_url" do
+    candidate = candidates(:arjun)
+    candidate.resume_url = "https://example.com/resume.pdf"
+    assert candidate.valid?
+  end
 end

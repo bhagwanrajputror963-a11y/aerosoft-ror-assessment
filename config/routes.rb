@@ -21,6 +21,9 @@ Rails.application.routes.draw do
 
   get "dashboard" => "dashboards#show"
 
+  get   "profile/edit" => "candidate_profiles#edit", as: :edit_candidate_profile
+  patch "profile"      => "candidate_profiles#update", as: :candidate_profile
+
   namespace :admin do
     resources :jobs, only: [ :index ]
     resources :applications, only: [ :index ]

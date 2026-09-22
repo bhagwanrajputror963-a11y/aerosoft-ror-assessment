@@ -3,6 +3,7 @@ arjun:
   headline: Commercial Pilot, 2500 flight hours
   skills: Boeing 737, Airbus A320, CRM
   experience_years: 5
+  resume_url: https://example.com/arjun-resume.pdf
 
 rina:
   user: candidate_two
