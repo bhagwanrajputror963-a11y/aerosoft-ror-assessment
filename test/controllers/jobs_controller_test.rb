@@ -54,14 +54,15 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
     assert_select %(a[href="#{job_path(jobs(:first_officer))}"][data-turbo-frame="_top"])
   end
 
-  test "the Clear link breaks out of the search-results turbo frame too" do
-    # Same class of bug as the job title links above, different symptom:
-    # Clear was scoped to turbo_frame "jobs_results", so clicking it only
-    # swapped the job cards — the search form (q, location, category,
-    # job_type, min_salary) lives outside that frame and was never reset,
-    # so the input boxes and dropdowns kept showing whatever was typed.
+  test "the Clear link forces a hard navigation, not a Turbo-managed one" do
+    # data-turbo-frame="_top" (the first fix attempt) was reported to still
+    # not reset the search form's inputs/selects. Since Turbo Frame behavior
+    # is client-side JS this environment has no browser to verify, disable
+    # Turbo outright for this link instead: a real full page load can't be
+    # scoped to a frame by any client-side logic, because Turbo never
+    # intercepts the click in the first place.
     get jobs_path
-    assert_select %(a[href="#{jobs_path}"][data-turbo-frame="_top"])
+    assert_select %(a[href="#{jobs_path}"][data-turbo="false"])
   end
 
   test "index filters by query params" do

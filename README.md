@@ -82,17 +82,15 @@ See [Database schema](#3-database-schema) below — `User`, `Company`,
 - **Email notifications** (status changes, new applications) via Action
   Mailer + a background job (Solid Queue is already in the Gemfile)
 - **Saved searches / job alerts** for candidates
-- **Pagination** on the job index and dashboards (Kaminari/Pagy) — not
-  needed at seed-data scale but required before this goes to production
 - **Rate limiting** on signup/login and the public API (`rack-attack`)
-- **FX-normalized salary filtering**: `Job` now has a real `currency` enum
+- **FX-normalized salary filtering**: `Job` has a real `currency` enum
   (inr/usd/eur/gbp/aed) instead of a hardcoded `₹`, so a Gulf-based posting
-  in AED renders and validates correctly. The `min_salary` filter still
-  compares raw numbers though (`app/models/job.rb`, `salary_at_least`
-  scope) — fine while almost everything is INR, but a genuinely
-  multi-currency board needs a normalized (e.g. USD-equivalent) column,
-  updated from a daily FX rate job, to filter/sort across currencies
-  correctly
+  in AED renders and validates correctly, and `min_salary` correctly
+  filters on each job's own `salary_min`. What's still open: no cross-currency
+  conversion, so `min_salary` only compares apples to apples within one
+  currency — a genuinely multi-currency board needs a normalized (e.g.
+  USD-equivalent) column, updated from a daily FX rate job, to filter/sort
+  correctly across currencies
 
 ---
 
@@ -168,7 +166,9 @@ jobs
   job_type (enum: full_time/part_time/contract/seasonal),
   status (enum: draft/published/closed),
   currency (enum: inr/usd/eur/gbp/aed), salary_min, salary_max, posted_at
-  indexes: location, category, status, title
+  indexes: category, status (btree); location, title (GIN trigram — serves
+  the ILIKE '%term%' substring search live search fires on every keystroke;
+  a plain btree index can't be used for a leading-wildcard search at all)
 
 applications
   id, job_id -> jobs, candidate_id -> candidates,
@@ -177,9 +177,10 @@ applications
   unique index on (job_id, candidate_id) — one application per candidate per job
 ```
 
-**Relationships:** `User has_one :recruiter` / `has_one :candidate` (a user
-is exactly one or the other, enforced by role validation, not a DB
-constraint — see improvements). `Company has_many :jobs, :recruiters`.
+**Relationships:** `User has_one :recruiter` / `has_one :candidate` — a
+user can only have one of each (unique DB index on `user_id` on both
+tables, not just a Rails-level check), and which one matches the user's
+`role` is enforced by model validation. `Company has_many :jobs, :recruiters`.
 `Job belongs_to :company, :recruiter`, `has_many :applications`.
 `Candidate has_many :applications, has_many :jobs, through: :applications`.
 
