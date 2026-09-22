@@ -26,6 +26,16 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "cannot self-register as admin by tampering with the role param" do
+    assert_difference("User.count", 1) do
+      post signup_path, params: {
+        user: { name: "Sneaky", email: "sneaky@example.com", password: "password123", password_confirmation: "password123", role: "admin" }
+      }
+    end
+    assert_equal "candidate", User.last.role
+    assert_not User.last.admin?
+  end
+
   test "does not create a user with a duplicate email" do
     assert_no_difference("User.count") do
       post signup_path, params: {

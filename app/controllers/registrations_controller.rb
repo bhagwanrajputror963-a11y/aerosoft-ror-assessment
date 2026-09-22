@@ -27,7 +27,14 @@ class RegistrationsController < ApplicationController
 
   private
 
+  SELF_SIGNUP_ROLES = %w[candidate recruiter].freeze
+
   def user_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation, :role)
+    params.require(:user).permit(:name, :email, :password, :password_confirmation).merge(role: signup_role)
+  end
+
+  def signup_role
+    submitted = params.dig(:user, :role)
+    SELF_SIGNUP_ROLES.include?(submitted) ? submitted : "candidate"
   end
 end
