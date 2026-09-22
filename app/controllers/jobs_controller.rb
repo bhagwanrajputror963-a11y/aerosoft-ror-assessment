@@ -5,7 +5,7 @@ class JobsController < ApplicationController
   before_action :authorize_owner!, only: [ :edit, :update, :destroy ]
 
   def index
-    @jobs = Job.filter(search_params).includes(:company)
+    @pagy, @jobs = pagy(Job.filter(search_params).includes(:company))
   end
 
   def show

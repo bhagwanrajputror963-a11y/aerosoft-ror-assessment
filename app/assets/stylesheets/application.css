@@ -4,9 +4,13 @@
 
 :root {
   --brand: #0b5fff;
+  --brand-dark: #094fd6;
   --border: #d9dde3;
   --bg: #f6f8fa;
   --text: #1c2733;
+  --danger: #c0392b;
+  --danger-bg: #fdecea;
+  --danger-border: #f3c6c2;
 }
 
 * { box-sizing: border-box; }
@@ -40,19 +44,12 @@ body {
   margin-right: auto;
 }
 
-.site-header a, .link-button {
+.site-header a {
   color: var(--text);
   text-decoration: none;
   font-size: 0.95rem;
 }
-
-.link-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font: inherit;
-}
+.site-header a:hover { color: var(--brand); }
 
 .who { color: #6b7684; font-size: 0.9rem; }
 
@@ -103,15 +100,54 @@ form.search input, form.search select {
   font: inherit;
 }
 
-button, input[type="submit"] {
+/*
+ * Button system. Applies to real <button>/<input type=submit"> elements
+ * AND to <a class="btn ..."> links styled to look like buttons — GET
+ * navigation (Edit, Apply now, Post a job) stays a real <a href> for
+ * correct semantics/no-JS fallback, but reads visually as an action,
+ * not a plain blue underlined link.
+ */
+.btn, button, input[type="submit"] {
+  display: inline-block;
+  appearance: none;
   background: var(--brand);
   color: #fff;
-  border: none;
-  padding: 9px 16px;
+  border: 1px solid var(--brand);
+  padding: 9px 18px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: none;
+  text-align: center;
+  line-height: 1.3;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
+.btn:hover, button:hover, input[type="submit"]:hover {
+  background: var(--brand-dark);
+  border-color: var(--brand-dark);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: var(--text);
+  border-color: var(--border);
+}
+.btn-secondary:hover { background: var(--bg); color: var(--text); border-color: var(--border); }
+
+.btn-danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: var(--danger-border);
+}
+.btn-danger:hover { background: #fbd9d5; color: var(--danger); border-color: var(--danger-border); }
+
+.btn-sm { padding: 6px 12px; font-size: 0.85rem; }
+
+.actions { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
+.actions form { display: inline-block; margin: 0; }
 
 .error-list {
   background: #fdecea;
@@ -123,3 +159,39 @@ button, input[type="submit"] {
 
 table { width: 100%; border-collapse: collapse; }
 th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+
+.pagy-bootstrap.nav { display: flex; justify-content: center; margin-top: 24px; }
+.pagy-bootstrap .pagination {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.pagy-bootstrap .page-item .page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  background: #fff;
+}
+.pagy-bootstrap .page-item .page-link:hover { background: var(--bg); }
+.pagy-bootstrap .page-item.active .page-link {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  cursor: default;
+}
+.pagy-bootstrap .page-item.disabled .page-link {
+  color: #b8c0cb;
+  cursor: default;
+  background: #fff;
+}
