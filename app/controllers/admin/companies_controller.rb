@@ -1,7 +1,7 @@
 module Admin
   class CompaniesController < BaseController
     def index
-      @pagy, @companies = pagy(Company.order(:name))
+      @pagy, @companies = pagy(Company.order(created_at: :desc))
 
       # Only the counts are shown, never the loaded job/recruiter records
       # themselves — .includes(:jobs, :recruiters) would eager-load rows
