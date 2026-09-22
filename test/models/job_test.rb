@@ -24,6 +24,30 @@ class JobTest < ActiveSupport::TestCase
     assert_raises(ArgumentError) { Job.new(category: :flight_attendant) }
   end
 
+  test "defaults to INR when no currency is given" do
+    assert jobs(:first_officer).inr?
+  end
+
+  test "formatted_salary_range renders the right symbol per currency and comma-groups the amount" do
+    job = jobs(:first_officer)
+    job.currency = :inr
+    job.salary_min = 1_200_000
+    job.salary_max = 2_000_000
+    assert_equal "₹1,200,000 - ₹2,000,000", job.formatted_salary_range
+
+    job.currency = :aed
+    job.salary_min = 6_000
+    job.salary_max = 9_000
+    assert_equal "AED 6,000 - AED 9,000", job.formatted_salary_range
+  end
+
+  test "formatted_salary_range is nil when no salary is set" do
+    job = jobs(:first_officer)
+    job.salary_min = nil
+    job.salary_max = nil
+    assert_nil job.formatted_salary_range
+  end
+
   test "invalid when salary_max is less than salary_min" do
     job = jobs(:first_officer)
     job.salary_min = 1_000_000

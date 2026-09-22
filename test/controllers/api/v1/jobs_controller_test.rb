@@ -12,9 +12,10 @@ class Api::V1::JobsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index applies search filters" do
-    get api_v1_jobs_path, params: { category: "Pilot" }
+    get api_v1_jobs_path, params: { category: "pilot" }
     body = JSON.parse(response.body)
-    assert(body.all? { |j| j["category"] == "Pilot" })
+    assert_not_empty body
+    assert(body.all? { |j| j["category"] == "pilot" })
   end
 
   test "show returns a single job with its company" do
@@ -22,6 +23,7 @@ class Api::V1::JobsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     body = JSON.parse(response.body)
     assert_equal jobs(:first_officer).title, body["title"]
+    assert_equal jobs(:first_officer).currency, body["currency"]
     assert_equal companies(:indigo).website, body["company"]["website"]
   end
 

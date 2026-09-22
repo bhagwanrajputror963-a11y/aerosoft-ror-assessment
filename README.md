@@ -74,6 +74,14 @@ See [Database schema](#3-database-schema) below — `User`, `Company`,
 - **Pagination** on the job index and dashboards (Kaminari/Pagy) — not
   needed at seed-data scale but required before this goes to production
 - **Rate limiting** on signup/login and the public API (`rack-attack`)
+- **FX-normalized salary filtering**: `Job` now has a real `currency` enum
+  (inr/usd/eur/gbp/aed) instead of a hardcoded `₹`, so a Gulf-based posting
+  in AED renders and validates correctly. The `min_salary` filter still
+  compares raw numbers though (`app/models/job.rb`, `salary_at_least`
+  scope) — fine while almost everything is INR, but a genuinely
+  multi-currency board needs a normalized (e.g. USD-equivalent) column,
+  updated from a daily FX rate job, to filter/sort across currencies
+  correctly
 
 ---
 
@@ -138,7 +146,7 @@ jobs
   category (enum: pilot/cabin_crew/ame/mba/ground_staff — flying-crews.com's taxonomy),
   job_type (enum: full_time/part_time/contract/seasonal),
   status (enum: draft/published/closed),
-  salary_min, salary_max, posted_at
+  currency (enum: inr/usd/eur/gbp/aed), salary_min, salary_max, posted_at
   indexes: location, category, status, title
 
 applications

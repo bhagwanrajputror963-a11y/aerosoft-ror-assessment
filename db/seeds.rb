@@ -42,6 +42,7 @@ jobs = [
     location: "Delhi, India",
     category: :pilot,
     job_type: :full_time,
+    currency: :inr,
     salary_min: 1_200_000,
     salary_max: 2_000_000
   },
@@ -51,6 +52,7 @@ jobs = [
     location: "Mumbai, India",
     category: :cabin_crew,
     job_type: :full_time,
+    currency: :inr,
     salary_min: 500_000,
     salary_max: 800_000
   },
@@ -60,6 +62,7 @@ jobs = [
     location: "Bengaluru, India",
     category: :ame,
     job_type: :contract,
+    currency: :inr,
     salary_min: 700_000,
     salary_max: 1_100_000
   },
@@ -69,6 +72,7 @@ jobs = [
     location: "Gurugram, India",
     category: :mba,
     job_type: :full_time,
+    currency: :inr,
     salary_min: 800_000,
     salary_max: 1_400_000
   },
@@ -78,8 +82,19 @@ jobs = [
     location: "Delhi, India",
     category: :ground_staff,
     job_type: :full_time,
+    currency: :inr,
     salary_min: 350_000,
     salary_max: 550_000
+  },
+  {
+    title: "Cabin Crew - Gulf Base",
+    description: "Cabin crew opening for a Gulf-based carrier, relocation assistance provided.",
+    location: "Dubai, UAE",
+    category: :cabin_crew,
+    job_type: :full_time,
+    currency: :aed,
+    salary_min: 6_000,
+    salary_max: 9_000
   }
 ]
 
@@ -90,6 +105,7 @@ jobs.each do |attrs|
     j.location = attrs[:location]
     j.category = attrs[:category]
     j.job_type = attrs[:job_type]
+    j.currency = attrs[:currency]
     j.salary_min = attrs[:salary_min]
     j.salary_max = attrs[:salary_max]
     j.status = :published

@@ -8,7 +8,7 @@ module Api
       def index
         jobs = Job.filter(search_params).includes(:company)
         render json: jobs.as_json(
-          only: [ :id, :title, :location, :job_type, :category, :salary_min, :salary_max, :status, :posted_at ],
+          only: [ :id, :title, :location, :job_type, :category, :currency, :salary_min, :salary_max, :status, :posted_at ],
           include: { company: { only: [ :id, :name, :location ] } }
         )
       end

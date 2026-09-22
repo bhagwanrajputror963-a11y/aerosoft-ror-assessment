@@ -27,12 +27,13 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
         job: {
           title: "Ground Ops Supervisor", description: "Manage ground operations.",
           location: "Delhi, India", category: "ground_staff", job_type: "full_time",
-          status: "published", salary_min: 600_000, salary_max: 900_000
+          status: "published", currency: "inr", salary_min: 600_000, salary_max: 900_000
         }
       }
     end
     assert_redirected_to job_path(Job.last)
     assert_equal recruiters(:priya).company, Job.last.company
+    assert Job.last.inr?
   end
 
   test "candidate cannot post a new job" do
