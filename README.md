@@ -62,7 +62,11 @@ implies but hasn't built yet, not a clone of existing functionality.
   rejected / hired. Marking someone hired auto-closes the job (one opening
   per job) and blocks further applications to it; a candidate's own applied
   status still shows on a since-closed job — it's their result, not a stale CTA
-- Role-based dashboards (candidate / recruiter / admin)
+- Role-based dashboards (candidate / recruiter / admin). Admin gets real
+  moderation power, not just counts: `/admin/jobs`, `/admin/applications`,
+  `/admin/companies`, `/admin/users` — every record regardless of company,
+  with the same edit/delete/status-update actions recruiters get on their
+  own jobs, extended to any job or application
 - JSON API: job search (`/api/v1/jobs`) and apply (`/api/v1/applications`)
 
 ### Database models
