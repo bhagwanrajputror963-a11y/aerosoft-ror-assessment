@@ -1,8 +1,9 @@
 require "test_helper"
 
 class CandidateTest < ActiveSupport::TestCase
-  test "valid with a user that has the candidate role" do
-    candidate = Candidate.new(user: users(:candidate_two), headline: "Flight Engineer")
+  test "valid with a user that has the candidate role and no existing profile" do
+    user = User.create!(name: "New Candidate", email: "newcand@example.com", password: "password123", role: :candidate)
+    candidate = Candidate.new(user: user, headline: "Flight Engineer")
     assert candidate.valid?
   end
 
@@ -10,6 +11,12 @@ class CandidateTest < ActiveSupport::TestCase
     candidate = Candidate.new(user: users(:recruiter_one))
     assert_not candidate.valid?
     assert_includes candidate.errors[:user], "must have the candidate role"
+  end
+
+  test "invalid when the user already has a candidate profile" do
+    candidate = Candidate.new(user: candidates(:arjun).user)
+    assert_not candidate.valid?
+    assert_includes candidate.errors[:user_id], "has already been taken"
   end
 
   test "invalid with negative experience_years" do

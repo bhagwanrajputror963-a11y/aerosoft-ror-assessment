@@ -18,6 +18,11 @@ class CompanyTest < ActiveSupport::TestCase
     assert_includes company.errors[:name], "has already been taken"
   end
 
+  test "duplicate name is rejected at the DB level even bypassing validation" do
+    company = Company.new(name: companies(:indigo).name)
+    assert_raises(ActiveRecord::RecordNotUnique) { company.save(validate: false) }
+  end
+
   test "invalid with a malformed website" do
     company = Company.new(name: "Bad Site Co", website: "not a url")
     assert_not company.valid?

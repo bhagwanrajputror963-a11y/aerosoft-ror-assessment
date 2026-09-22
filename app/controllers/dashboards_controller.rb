@@ -6,7 +6,7 @@ class DashboardsController < ApplicationController
     when "candidate"
       @applications = current_user.candidate.applications.includes(job: :company).order(created_at: :desc)
     when "recruiter"
-      @jobs = current_user.recruiter.jobs.includes(:applications).order(created_at: :desc)
+      @jobs = current_user.recruiter.jobs.includes(applications: { candidate: :user }).order(created_at: :desc)
     when "admin"
       @jobs_count = Job.count
       @applications_count = Application.count
