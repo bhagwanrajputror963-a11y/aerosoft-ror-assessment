@@ -59,6 +59,21 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
     assert_match jobs(:first_officer).title, response.body
   end
 
+  test "show offers Apply now to a candidate who has not applied yet" do
+    sign_in_as(users(:candidate_two))
+    get job_path(jobs(:first_officer))
+    assert_match "Apply now", response.body
+    assert_no_match "You applied", response.body
+  end
+
+  test "show shows applied status instead of Apply now to a candidate who already applied" do
+    sign_in_as(users(:candidate_one)) # candidate_one already applied to first_officer via fixtures
+    get job_path(jobs(:first_officer))
+    assert_match "You applied", response.body
+    assert_match applications(:arjun_applies_first_officer).status.titleize, response.body
+    assert_no_match "Apply now", response.body
+  end
+
   test "recruiter can post a new job" do
     sign_in_as(users(:recruiter_one))
     assert_difference("Job.count", 1) do

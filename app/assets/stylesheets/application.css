@@ -83,6 +83,19 @@ body {
   margin-right: 6px;
 }
 
+.applied-status {
+  display: inline-block;
+  background: #e6f4ea;
+  color: #1e7a34;
+  border: 1px solid #bfe3c9;
+  border-radius: 6px;
+  padding: 9px 16px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0;
+}
+.applied-status .badge { background: #fff; }
+
 form.search { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
 form.search input, form.search select {
   padding: 8px 10px;

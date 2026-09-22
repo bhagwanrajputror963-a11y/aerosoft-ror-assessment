@@ -2,6 +2,7 @@ class ApplicationsController < ApplicationController
   before_action :require_login
   before_action(-> { require_role(:candidate) }, only: [ :new, :create ])
   before_action :set_job, only: [ :new, :create ]
+  before_action :redirect_if_already_applied, only: [ :new, :create ]
 
   def new
     @application = @job.applications.build
@@ -35,6 +36,12 @@ class ApplicationsController < ApplicationController
 
   def set_job
     @job = Job.find(params[:job_id])
+  end
+
+  def redirect_if_already_applied
+    if current_user.candidate.applications.exists?(job: @job)
+      redirect_to @job, alert: "You've already applied to this job."
+    end
   end
 
   def application_params
