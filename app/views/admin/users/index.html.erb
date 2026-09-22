@@ -1,0 +1,28 @@
+<% content_for :title, "Admin · Users | Flying Crews" %>
+<h1>All Users</h1>
+<%= render "admin/nav" %>
+
+<table>
+  <thead>
+    <tr><th>Name</th><th>Email</th><th>Role</th><th>Details</th><th>Joined</th></tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.name %></td>
+        <td><%= user.email %></td>
+        <td><span class="badge"><%= user.role.titleize %></span></td>
+        <td>
+          <% if user.recruiter? && user.recruiter %>
+            <%= user.recruiter.company.name %> &middot; <%= user.recruiter.position %>
+          <% elsif user.candidate? && user.candidate %>
+            <%= user.candidate.headline %>
+          <% end %>
+        </td>
+        <td><%= user.created_at.strftime("%b %d, %Y") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>

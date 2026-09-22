@@ -21,6 +21,13 @@ Rails.application.routes.draw do
 
   get "dashboard" => "dashboards#show"
 
+  namespace :admin do
+    resources :jobs, only: [ :index ]
+    resources :applications, only: [ :index ]
+    resources :companies, only: [ :index ]
+    resources :users, only: [ :index ]
+  end
+
   namespace :api do
     namespace :v1 do
       resources :jobs, only: [ :index, :show ]

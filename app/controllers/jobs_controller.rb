@@ -1,6 +1,7 @@
 class JobsController < ApplicationController
   before_action :require_login, except: [ :index, :show ]
-  before_action :require_recruiter, only: [ :new, :create, :edit, :update, :destroy ]
+  before_action :require_recruiter, only: [ :new, :create ]
+  before_action :require_recruiter_or_admin, only: [ :edit, :update, :destroy ]
   before_action :set_job, only: [ :show, :edit, :update, :destroy ]
   before_action :authorize_owner!, only: [ :edit, :update, :destroy ]
 
@@ -52,6 +53,7 @@ class JobsController < ApplicationController
   end
 
   def authorize_owner!
+    return if current_user.admin?
     unless current_user.recruiter && @job.recruiter_id == current_user.recruiter.id
       redirect_to jobs_path, alert: "You can only manage jobs you posted."
     end
@@ -59,6 +61,10 @@ class JobsController < ApplicationController
 
   def require_recruiter
     require_role(:recruiter)
+  end
+
+  def require_recruiter_or_admin
+    require_role(:recruiter, :admin)
   end
 
   def job_params

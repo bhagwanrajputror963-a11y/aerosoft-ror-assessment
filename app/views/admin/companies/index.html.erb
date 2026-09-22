@@ -1,0 +1,22 @@
+<% content_for :title, "Admin · Companies | Flying Crews" %>
+<h1>All Companies</h1>
+<%= render "admin/nav" %>
+
+<table>
+  <thead>
+    <tr><th>Name</th><th>Location</th><th>Recruiters</th><th>Jobs</th><th>Website</th></tr>
+  </thead>
+  <tbody>
+    <% @companies.each do |company| %>
+      <tr>
+        <td><%= company.name %></td>
+        <td><%= company.location %></td>
+        <td><%= @recruiter_counts.fetch(company.id, 0) %></td>
+        <td><%= @job_counts.fetch(company.id, 0) %></td>
+        <td><% if company.website.present? %><%= link_to company.website, company.website, target: "_blank", rel: "noopener" %><% end %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>

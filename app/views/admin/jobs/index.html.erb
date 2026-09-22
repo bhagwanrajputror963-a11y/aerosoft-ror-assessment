@@ -1,0 +1,24 @@
+<% content_for :title, "Admin · Jobs | Flying Crews" %>
+<h1>All Jobs</h1>
+<%= render "admin/nav" %>
+
+<table>
+  <thead>
+    <tr><th>Title</th><th>Company</th><th>Recruiter</th><th>Status</th><th>Applicants</th><th>Posted</th><th></th></tr>
+  </thead>
+  <tbody>
+    <% @jobs.each do |job| %>
+      <tr>
+        <td><%= link_to job.title, job %></td>
+        <td><%= job.company.name %></td>
+        <td><%= job.recruiter.user.name %></td>
+        <td><span class="badge"><%= job.status.titleize %></span></td>
+        <td><%= @application_counts.fetch(job.id, 0) %></td>
+        <td><%= job.posted_at&.strftime("%b %d, %Y") || job.created_at.strftime("%b %d, %Y") %></td>
+        <td><%= link_to "Edit", edit_job_path(job), class: "btn btn-secondary btn-sm" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>

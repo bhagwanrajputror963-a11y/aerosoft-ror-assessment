@@ -167,6 +167,24 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Senior First Officer", jobs(:first_officer).reload.title
   end
 
+  test "admin can edit and delete any job, not just ones they posted" do
+    sign_in_as(users(:admin_one))
+
+    patch job_path(jobs(:first_officer)), params: { job: { title: "Admin-edited title" } }
+    assert_redirected_to job_path(jobs(:first_officer))
+    assert_equal "Admin-edited title", jobs(:first_officer).reload.title
+
+    assert_difference("Job.count", -1) do
+      delete job_path(jobs(:cabin_crew))
+    end
+  end
+
+  test "admin sees Edit/Delete actions on a job page even though they didn't post it" do
+    sign_in_as(users(:admin_one))
+    get job_path(jobs(:first_officer))
+    assert_select %(a[href="#{edit_job_path(jobs(:first_officer))}"])
+  end
+
   test "recruiter cannot update a job they do not own" do
     other_recruiter = User.create!(name: "Other Recruiter", email: "other@example.com", password: "password123", role: :recruiter)
     other_company = Company.create!(name: "SpiceJet")

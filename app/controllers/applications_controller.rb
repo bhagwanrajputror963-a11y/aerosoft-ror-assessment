@@ -22,14 +22,16 @@ class ApplicationsController < ApplicationController
 
   def update_status
     application = Application.find(params[:id])
-    unless current_user.recruiter && application.job.recruiter_id == current_user.recruiter.id
+    unless current_user.admin? || (current_user.recruiter && application.job.recruiter_id == current_user.recruiter.id)
       return redirect_to dashboard_path, alert: "Not authorized."
     end
 
+    redirect_target = current_user.admin? ? admin_applications_path : dashboard_path
+
     if application.update(status: params[:status])
-      redirect_to dashboard_path, notice: "Application status updated."
+      redirect_to redirect_target, notice: "Application status updated."
     else
-      redirect_to dashboard_path, alert: application.errors.full_messages.to_sentence
+      redirect_to redirect_target, alert: application.errors.full_messages.to_sentence
     end
   end
 
