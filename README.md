@@ -371,16 +371,7 @@ DB).
 
 ---
 
-## 8. Commit history
-
-The git history is organized as small, feature-scoped commits, each
-shipping its own tests (`git log --oneline` in this repo). Notably, the
-`fix(models): prevent NOT NULL violation when destroying a company` commit
-is a real TDD catch: the regression test was written and confirmed failing
-against the original `dependent: :nullify` association *before* the fix was
-written — not a hypothetical.
-
-## 9. What's not included
+## 8. What's not included
 
 Per the assessment's scope, this covers one full vertical slice (jobs +
 applications) rather than the other eight listed projects. Screenshots/demo
