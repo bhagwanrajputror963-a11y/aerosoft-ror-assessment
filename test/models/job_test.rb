@@ -79,6 +79,18 @@ class JobTest < ActiveSupport::TestCase
     assert_not_includes results, jobs(:cabin_crew)
   end
 
+  test "min_salary filters on the job's own floor, not whether its ceiling happens to reach the bar" do
+    # Reported bug: searching "min salary 700,000" returned a job paying
+    # 450,000-850,000 — its salary_max (850,000) cleared the bar even though
+    # its salary_min (450,000) does not, so a candidate could legitimately be
+    # offered far less than the "minimum" they searched for.
+    job = jobs(:cabin_crew)
+    job.update!(salary_min: 450_000, salary_max: 850_000)
+
+    assert_not_includes Job.filter(min_salary: 700_000), job
+    assert_includes Job.filter(min_salary: 450_000), job
+  end
+
   test "title and location search is case-insensitive" do
     # Regression: plain SQL LIKE is case-sensitive on Postgres (unlike
     # SQLite/MySQL's default collation), so a lowercase query like "delhi"
