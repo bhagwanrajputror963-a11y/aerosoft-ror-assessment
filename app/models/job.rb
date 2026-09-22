@@ -41,10 +41,16 @@ class Job < ApplicationRecord
   scope :in_location, ->(loc) { where("location ILIKE :q", q: "%#{sanitize_sql_like(loc)}%") if loc.present? }
   scope :in_category, ->(cat) { where(category: cat) if cat.present? }
   scope :of_type, ->(type) { where(job_type: type) if type.present? }
-  # NOTE: compares raw salary_max across currencies with no FX conversion —
+  # Filters on the job's own salary_min, not salary_max: "minimum salary
+  # 700,000" means the job must guarantee at least that much, not merely
+  # reach it somewhere in its range — a ₹450,000-₹850,000 job doesn't
+  # satisfy "at least ₹700,000" just because its ceiling happens to clear
+  # the bar; a candidate could legitimately be offered the ₹450,000 end.
+  #
+  # NOTE: compares raw salary_min across currencies with no FX conversion —
   # fine while nearly all postings are INR, but a mixed-currency board needs
   # a normalized (e.g. USD-equivalent) column to filter on. See README.
-  scope :salary_at_least, ->(amount) { where("salary_max >= ?", amount) if amount.present? }
+  scope :salary_at_least, ->(amount) { where("salary_min >= ?", amount) if amount.present? }
   scope :recent_first, -> { order(posted_at: :desc) }
 
   def self.filter(params)
