@@ -9,7 +9,15 @@ Rails.application.routes.draw do
   post   "login"  => "sessions#create"
   delete "logout" => "sessions#destroy"
 
-  resources :jobs, only: [ :index, :show, :new, :create, :edit, :update, :destroy ]
+  resources :jobs, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
+    resources :applications, only: [ :new, :create ]
+  end
+
+  resources :applications, only: [] do
+    member do
+      patch :update_status
+    end
+  end
 
   get "dashboard" => "dashboards#show"
 end
