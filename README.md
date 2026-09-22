@@ -50,7 +50,11 @@ implies but hasn't built yet, not a clone of existing functionality.
 
 - Recruiter self-signup (creates or joins a Company) and candidate signup
 - Public job board: search/filter by title, location, category, job type,
-  minimum salary
+  minimum salary. Title/location search is case-insensitive (Postgres
+  `ILIKE`, GIN trigram indexed) and live: a Stimulus controller
+  (`live_search_controller.js`) auto-submits the form via a Turbo Frame
+  once a field has 3+ characters (debounced 400ms), or immediately when
+  cleared back to empty
 - Recruiter CRUD on their own job postings (ownership-checked)
 - Candidate apply flow with a cover letter, one application per job
 - Recruiter applicant pipeline: submitted → under_review → shortlisted /
@@ -392,10 +396,16 @@ leftover from the SQLite scaffold, never updated after the Postgres
 migration). CI has been unable to actually run the test suite. Fixed with
 a `postgres:16-alpine` service block.
 
-**Known, deliberately-undone gap:** `salary_at_least` still compares raw
-numbers across currencies with no FX conversion (see §1). Flagged rather
-than silently left in, since fixing it properly needs a normalized
-comparison column, not a quick patch.
+**Known, deliberately-undone gaps:**
+- `salary_at_least` still compares raw numbers across currencies with no
+  FX conversion (see §1). Flagged rather than silently left in, since
+  fixing it properly needs a normalized comparison column, not a quick patch.
+- The live-search Stimulus controller has server-side regression coverage
+  (request tests simulating the `Turbo-Frame` header and query params it
+  sends), but no real-browser test of the actual keyup/debounce behavior —
+  `test/application_system_test_case.rb` is wired for `headless_chrome`,
+  but no Chrome/Chromium binary is installed in `Dockerfile.dev`. Adding
+  one is the honest next step before trusting this in front of real users.
 
 ## 9. Commit history
 
