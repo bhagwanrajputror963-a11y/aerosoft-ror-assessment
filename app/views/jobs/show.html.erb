@@ -8,7 +8,7 @@
     <%= @job.company.name %> &middot; <%= @job.location %> &middot;
     <span class="badge"><%= @job.job_type.titleize %></span>
     <span class="badge"><%= @job.status.titleize %></span>
-    <% if @job.category.present? %><span class="badge"><%= @job.category %></span><% end %>
+    <% if @job.category.present? %><span class="badge"><%= Job::CATEGORY_LABELS[@job.category] %></span><% end %>
   </p>
   <% if @job.salary_min || @job.salary_max %>
     <p><strong>Salary:</strong> ₹<%= @job.salary_min %> - ₹<%= @job.salary_max %></p>

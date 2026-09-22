@@ -5,7 +5,7 @@
 <%= form_with url: jobs_path, method: :get, class: "search", local: true do %>
   <%= text_field_tag :q, params[:q], placeholder: "Title (e.g. Pilot, Cabin Crew)" %>
   <%= text_field_tag :location, params[:location], placeholder: "Location" %>
-  <%= text_field_tag :category, params[:category], placeholder: "Category" %>
+  <%= select_tag :category, options_for_select(Job::CATEGORY_LABELS.map { |key, label| [label, key] }, params[:category]), include_blank: "Any category" %>
   <%= select_tag :job_type, options_for_select(Job.job_types.keys.map { |t| [t.titleize, t] }, params[:job_type]), include_blank: "Any type" %>
   <%= number_field_tag :min_salary, params[:min_salary], placeholder: "Min salary" %>
   <%= submit_tag "Search" %>
@@ -25,7 +25,7 @@
     <p class="job-title"><%= link_to job.title, job %></p>
     <p class="job-meta"><%= job.company.name %> &middot; <%= job.location %> &middot; posted <%= time_ago_in_words(job.posted_at || job.created_at) %> ago</p>
     <span class="badge"><%= job.job_type.titleize %></span>
-    <% if job.category.present? %><span class="badge"><%= job.category %></span><% end %>
+    <% if job.category.present? %><span class="badge"><%= Job::CATEGORY_LABELS[job.category] %></span><% end %>
     <% if job.salary_min || job.salary_max %>
       <span class="badge">₹<%= job.salary_min %> - ₹<%= job.salary_max %></span>
     <% end %>

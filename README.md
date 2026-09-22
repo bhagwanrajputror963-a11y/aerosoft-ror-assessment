@@ -26,6 +26,26 @@ most concrete detail for (its own three sub-questions on architecture, DB
 design, and search/filtering), so it's the best-specified target to build
 against in the assessment's time window.
 
+### What the real flying-crews.com actually is
+
+I checked the live site (https://www.flying-crews.com/) to ground this build
+in reality rather than guessing. It's currently a **Blogger-hosted content
+site**, not a functioning job platform — its own footer says "Powered by
+Blogger," and its disclaimer states: *"We exclusively operate as an aviation
+job board and are not currently affiliated with any airlines... not currently
+functioning as a hiring firm."* There's no signup, no login, no apply form,
+no database — it's aviation news/articles/career content that links out to a
+Linktree for actual opportunities. It targets the same five job categories
+this app models: **Pilots, Cabin Crew/Air Hostesses, AMEs, MBAs, and Ground
+Staff** — I pulled `Job#category` from free text into an enum matching that
+exact taxonomy (`db/migrate/20260922092058_change_category_to_integer_on_jobs.rb`)
+so the categories aren't invented.
+
+In other words: everything in this repo (real auth, real CRUD, a real
+apply/review pipeline, a real JSON API) is *more* than the live site
+currently does — this is the product Flying Crews' own "job board" framing
+implies but hasn't built yet, not a clone of existing functionality.
+
 ### Features built
 
 - Recruiter self-signup (creates or joins a Company) and candidate signup
@@ -114,7 +134,8 @@ candidates
 
 jobs
   id, company_id -> companies, recruiter_id -> recruiters,
-  title, description, location, category,
+  title, description, location,
+  category (enum: pilot/cabin_crew/ame/mba/ground_staff — flying-crews.com's taxonomy),
   job_type (enum: full_time/part_time/contract/seasonal),
   status (enum: draft/published/closed),
   salary_min, salary_max, posted_at
@@ -155,7 +176,7 @@ Search/filter published jobs.
     "title": "First Officer - Airbus A320",
     "location": "Delhi, India",
     "job_type": "full_time",
-    "category": "Pilot",
+    "category": "pilot",
     "salary_min": 1200000,
     "salary_max": 2000000,
     "status": "published",
