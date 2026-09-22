@@ -34,7 +34,7 @@ services:
       - bundle_cache:/usr/local/bundle
     stdin_open: true
     tty: true
-    command: bash -c "bundle install && bin/rails db:prepare && bin/rails server -b 0.0.0.0"
+    command: bash -c "bundle install && bin/rails db:prepare && (bin/dev-watch &) && bin/rails server -b 0.0.0.0"
 
 volumes:
   db_data:
