@@ -1,7 +1,7 @@
 class Job < ApplicationRecord
   belongs_to :company
   belongs_to :recruiter
-  has_many :applications, dependent: :destroy
+  has_many :applications, -> { order(created_at: :desc) }, dependent: :destroy
   has_many :candidates, through: :applications
 
   enum :job_type, { full_time: 0, part_time: 1, contract: 2, seasonal: 3 }

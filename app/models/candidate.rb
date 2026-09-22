@@ -1,6 +1,6 @@
 class Candidate < ApplicationRecord
   belongs_to :user
-  has_many :applications, dependent: :destroy
+  has_many :applications, -> { order(created_at: :desc) }, dependent: :destroy
   has_many :jobs, through: :applications
 
   validates :user_id, uniqueness: true
