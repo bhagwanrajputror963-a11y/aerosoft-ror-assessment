@@ -20,4 +20,11 @@ Rails.application.routes.draw do
   end
 
   get "dashboard" => "dashboards#show"
+
+  namespace :api do
+    namespace :v1 do
+      resources :jobs, only: [ :index, :show ]
+      resources :applications, only: [ :create ]
+    end
+  end
 end
