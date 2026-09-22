@@ -48,6 +48,10 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Detects N+1 queries and unused eager loads; raises in test so a
+  # regression fails CI instead of only showing up in production logs.
+  gem "bullet"
 end
 
 group :development do

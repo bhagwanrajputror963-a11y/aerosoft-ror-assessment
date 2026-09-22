@@ -47,4 +47,13 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # Fail the test itself on an N+1 query or an unused eager load, so a
+  # regression like a missing .includes shows up as a test failure, not a
+  # slow page someone notices in production.
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true
+    Bullet.raise = true
+  end
 end

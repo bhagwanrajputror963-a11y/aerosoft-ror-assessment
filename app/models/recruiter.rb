@@ -4,6 +4,7 @@ class Recruiter < ApplicationRecord
   has_many :jobs, dependent: :restrict_with_error
 
   validates :position, presence: true
+  validates :user_id, uniqueness: true
   validate :user_must_have_recruiter_role
 
   private

@@ -31,7 +31,7 @@
     <% @jobs.each do |job| %>
       <div class="card">
         <p class="job-title"><%= link_to job.title, job %></p>
-        <p class="job-meta"><%= job.applications.count %> application(s) &middot; <span class="badge"><%= job.status.titleize %></span></p>
+        <p class="job-meta"><%= job.applications.size %> application(s) &middot; <span class="badge"><%= job.status.titleize %></span></p>
         <% if job.applications.any? %>
           <table>
             <thead><tr><th>Candidate</th><th>Status</th><th>Update</th></tr></thead>
