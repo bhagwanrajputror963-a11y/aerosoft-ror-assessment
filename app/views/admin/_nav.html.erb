@@ -1,0 +1,7 @@
+<nav class="admin-nav">
+  <%= link_to "Overview", dashboard_path, class: (current_page?(dashboard_path) ? "active" : nil) %>
+  <%= link_to "Jobs", admin_jobs_path, class: (current_page?(admin_jobs_path) ? "active" : nil) %>
+  <%= link_to "Applications", admin_applications_path, class: (current_page?(admin_applications_path) ? "active" : nil) %>
+  <%= link_to "Companies", admin_companies_path, class: (current_page?(admin_companies_path) ? "active" : nil) %>
+  <%= link_to "Users", admin_users_path, class: (current_page?(admin_users_path) ? "active" : nil) %>
+</nav>

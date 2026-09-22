@@ -72,6 +72,14 @@ class ApplicationsControllerTest < ActionDispatch::IntegrationTest
     assert application.reload.shortlisted?
   end
 
+  test "admin can update the status of any application, regardless of company" do
+    sign_in_as(users(:admin_one))
+    application = applications(:arjun_applies_first_officer)
+    patch update_status_application_path(application), params: { status: "shortlisted" }
+    assert_redirected_to admin_applications_path
+    assert application.reload.shortlisted?
+  end
+
   test "a recruiter from another company cannot update the application status" do
     other_recruiter = User.create!(name: "Other Recruiter", email: "other@example.com", password: "password123", role: :recruiter)
     other_company = Company.create!(name: "SpiceJet")

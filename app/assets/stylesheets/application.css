@@ -167,6 +167,22 @@ form.search input, form.search select {
 .actions { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
 .actions form { display: inline-block; margin: 0; }
 
+.admin-nav {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.admin-nav a {
+  padding: 8px 14px;
+  border-radius: 6px 6px 0 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6b7684;
+}
+.admin-nav a:hover { color: var(--text); background: var(--bg); }
+.admin-nav a.active { color: var(--brand); border-bottom: 2px solid var(--brand); }
+
 .error-list {
   background: #fdecea;
   color: #c0392b;

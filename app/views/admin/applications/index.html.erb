@@ -1,0 +1,27 @@
+<% content_for :title, "Admin · Applications | Flying Crews" %>
+<h1>All Applications</h1>
+<%= render "admin/nav" %>
+
+<table>
+  <thead>
+    <tr><th>Candidate</th><th>Job</th><th>Company</th><th>Status</th><th>Applied</th><th>Update</th></tr>
+  </thead>
+  <tbody>
+    <% @applications.each do |application| %>
+      <tr>
+        <td><%= application.candidate.user.name %></td>
+        <td><%= link_to application.job.title, application.job %></td>
+        <td><%= application.job.company.name %></td>
+        <td><span class="badge"><%= application.status.titleize %></span></td>
+        <td><%= application.applied_at&.strftime("%b %d, %Y") %></td>
+        <td>
+          <%= form_with url: update_status_application_path(application), method: :patch, local: true do |f| %>
+            <%= select_tag :status, options_for_select(Application.statuses.keys.map { |s| [s.titleize, s] }, application.status), onchange: "this.form.requestSubmit()" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>

@@ -58,8 +58,9 @@
   <% end %>
 
 <% when "admin" %>
-  <div class="card"><strong>Jobs posted:</strong> <%= @jobs_count %></div>
-  <div class="card"><strong>Applications submitted:</strong> <%= @applications_count %></div>
-  <div class="card"><strong>Companies:</strong> <%= @companies_count %></div>
-  <div class="card"><strong>Candidates:</strong> <%= @candidates_count %></div>
+  <%= render "admin/nav" %>
+  <div class="card"><strong>Jobs posted:</strong> <%= link_to @jobs_count, admin_jobs_path %></div>
+  <div class="card"><strong>Applications submitted:</strong> <%= link_to @applications_count, admin_applications_path %></div>
+  <div class="card"><strong>Companies:</strong> <%= link_to @companies_count, admin_companies_path %></div>
+  <div class="card"><strong>Candidates:</strong> <%= link_to @candidates_count, admin_users_path %></div>
 <% end %>
