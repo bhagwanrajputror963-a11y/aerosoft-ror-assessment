@@ -34,8 +34,11 @@ class Job < ApplicationRecord
   end
 
   scope :active, -> { where(status: :published) }
-  scope :search_title, ->(q) { where("title LIKE :q", q: "%#{sanitize_sql_like(q)}%") if q.present? }
-  scope :in_location, ->(loc) { where("location LIKE :q", q: "%#{sanitize_sql_like(loc)}%") if loc.present? }
+  # ILIKE (Postgres-specific case-insensitive LIKE) — plain LIKE is
+  # case-sensitive on Postgres, unlike SQLite/MySQL's default collation,
+  # so a lowercase search like "delhi" silently matched nothing against "Delhi".
+  scope :search_title, ->(q) { where("title ILIKE :q", q: "%#{sanitize_sql_like(q)}%") if q.present? }
+  scope :in_location, ->(loc) { where("location ILIKE :q", q: "%#{sanitize_sql_like(loc)}%") if loc.present? }
   scope :in_category, ->(cat) { where(category: cat) if cat.present? }
   scope :of_type, ->(type) { where(job_type: type) if type.present? }
   # NOTE: compares raw salary_max across currencies with no FX conversion —
