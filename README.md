@@ -82,17 +82,16 @@ See [Database schema](#3-database-schema) below — `User`, `Company`,
 - **Email notifications** (status changes, new applications) via Action
   Mailer + a background job (Solid Queue is already in the Gemfile)
 - **Saved searches / job alerts** for candidates
-- **Pagination** on the job index and dashboards (Kaminari/Pagy) — not
-  needed at seed-data scale but required before this goes to production
 - **Rate limiting** on signup/login and the public API (`rack-attack`)
-- **FX-normalized salary filtering**: `Job` now has a real `currency` enum
+- **FX-normalized salary filtering**: `Job` has a real `currency` enum
   (inr/usd/eur/gbp/aed) instead of a hardcoded `₹`, so a Gulf-based posting
-  in AED renders and validates correctly. The `min_salary` filter still
-  compares raw numbers though (`app/models/job.rb`, `salary_at_least`
-  scope) — fine while almost everything is INR, but a genuinely
-  multi-currency board needs a normalized (e.g. USD-equivalent) column,
-  updated from a daily FX rate job, to filter/sort across currencies
-  correctly
+  in AED renders and validates correctly, and `min_salary` correctly
+  filters on each job's own `salary_min` (a real bug — it used to compare
+  against `salary_max`, see §8). What's still open: no cross-currency
+  conversion, so `min_salary` only compares apples to apples within one
+  currency — a genuinely multi-currency board needs a normalized (e.g.
+  USD-equivalent) column, updated from a daily FX rate job, to filter/sort
+  correctly across currencies
 
 ---
 
@@ -168,7 +167,9 @@ jobs
   job_type (enum: full_time/part_time/contract/seasonal),
   status (enum: draft/published/closed),
   currency (enum: inr/usd/eur/gbp/aed), salary_min, salary_max, posted_at
-  indexes: location, category, status, title
+  indexes: category, status (btree); location, title (GIN trigram — serves
+  the ILIKE '%term%' substring search live search fires on every keystroke;
+  a plain btree index can't be used for a leading-wildcard search at all)
 
 applications
   id, job_id -> jobs, candidate_id -> candidates,
@@ -177,9 +178,10 @@ applications
   unique index on (job_id, candidate_id) — one application per candidate per job
 ```
 
-**Relationships:** `User has_one :recruiter` / `has_one :candidate` (a user
-is exactly one or the other, enforced by role validation, not a DB
-constraint — see improvements). `Company has_many :jobs, :recruiters`.
+**Relationships:** `User has_one :recruiter` / `has_one :candidate` — a
+user can only have one of each (unique DB index on `user_id` on both
+tables, not just a Rails-level check), and which one matches the user's
+`role` is enforced by model validation. `Company has_many :jobs, :recruiters`.
 `Job belongs_to :company, :recruiter`, `has_many :applications`.
 `Candidate has_many :applications, has_many :jobs, through: :applications`.
 
@@ -423,6 +425,30 @@ a `postgres:16-alpine` service block.
   `test/application_system_test_case.rb` is wired for `headless_chrome`,
   but no Chrome/Chromium binary is installed in `Dockerfile.dev`. Adding
   one is the honest next step before trusting this in front of real users.
+
+**Three more bugs found through actual use, after the audit above:**
+- `min_salary` filtered on `salary_max >= amount` instead of `salary_min`,
+  so a job paying ₹450,000–₹850,000 matched a "minimum salary ₹700,000"
+  search — its ceiling cleared the bar even though a candidate could
+  legitimately be offered the ₹450,000 floor. Fixed to compare
+  `salary_min`, the column that actually represents a guarantee.
+- Two admin list views (`/admin/companies`, `/admin/users`) weren't
+  ordered by recency at all — one was alphabetical, one was role-then-name.
+  Every other list in the app puts recent records first; these two didn't.
+  Also added a default `order(created_at: :desc)` to `Job#applications` and
+  `Candidate#applications` — the recruiter dashboard's per-job applicant
+  table had no explicit order, relying on Postgres to return rows in
+  whatever order it felt like, which it doesn't guarantee absent an
+  `ORDER BY` (the same root cause as the `db/seeds.rb` ordering bug below).
+- The job board's "Clear" link was scoped to the `jobs_results` Turbo
+  Frame (like the rest of live search), but the search form's own inputs
+  live outside that frame — a frame-scoped click reset the results without
+  ever touching the visible text boxes and dropdowns. Since Turbo Frame
+  behavior is client-side JS this environment has no browser to verify,
+  fixed by disabling Turbo outright for that one link (`data-turbo="false"`)
+  rather than a more targeted frame-target fix — a real hard navigation
+  can't be scoped to a partial update by any client-side logic, because
+  Turbo never intercepts the click.
 
 ## 9. Commit history
 
