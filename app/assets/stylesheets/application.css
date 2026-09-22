@@ -96,6 +96,11 @@ body {
 }
 .applied-status .badge { background: #fff; }
 
+.badge-applied {
+  background: #e6f4ea;
+  color: #1e7a34;
+}
+
 form.search { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
 form.search input, form.search select {
   padding: 8px 10px;

@@ -24,7 +24,8 @@
     <p>No jobs found matching your search.</p>
   <% end %>
 
-  <%= render partial: "job_card", collection: @jobs, as: :job %>
+  <%= render partial: "job_card", collection: @jobs, as: :job,
+        locals: { applied_job_statuses: @applied_job_statuses } %>
 
   <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
 <% end %>

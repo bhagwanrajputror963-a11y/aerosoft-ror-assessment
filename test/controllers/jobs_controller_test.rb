@@ -8,6 +8,40 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match jobs(:draft_job).title, response.body
   end
 
+  test "index shows an applied badge on jobs the current candidate has applied to, not others" do
+    sign_in_as(users(:candidate_one)) # candidate_one already applied to first_officer via fixtures
+    get jobs_path
+    within_job_card(jobs(:first_officer)) { |html| assert_match "Applied", html }
+    within_job_card(jobs(:cabin_crew)) { |html| assert_no_match "Applied", html }
+  end
+
+  test "index shows no applied badge for a candidate who hasn't applied to anything" do
+    sign_in_as(users(:candidate_two))
+    get jobs_path
+    assert_no_match "Applied", response.body
+  end
+
+  test "index shows no applied badge for anonymous visitors" do
+    get jobs_path
+    assert_no_match "Applied", response.body
+  end
+
+  test "the job-card fragment cache does not leak one candidate's applied status onto another candidate's view" do
+    # jobs/_job_card caches the shared markup per [job, job.company], but the
+    # applied-status badge must render fresh per request — otherwise whichever
+    # candidate's view populates the cache first "wins" for every later viewer.
+    with_fragment_caching do
+      sign_in_as(users(:candidate_one)) # has applied to first_officer
+      get jobs_path
+      within_job_card(jobs(:first_officer)) { |html| assert_match "Applied", html }
+
+      delete logout_path
+      sign_in_as(users(:candidate_two)) # has NOT applied to first_officer
+      get jobs_path
+      within_job_card(jobs(:first_officer)) { |html| assert_no_match "Applied", html }
+    end
+  end
+
   test "job title links break out of the search-results turbo frame" do
     # Job cards render inside turbo_frame_tag("jobs_results") for live search.
     # Without data-turbo-frame="_top" on the title link, clicking a job from
