@@ -14,7 +14,13 @@ class ApplicationsControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference("Application.count") do
       post job_applications_path(jobs(:first_officer)), params: { application: { cover_letter: "Again!" } }
     end
-    assert_response :unprocessable_entity
+    assert_redirected_to job_path(jobs(:first_officer))
+  end
+
+  test "candidate who already applied is redirected away from the apply form, not shown it" do
+    sign_in_as(users(:candidate_one))
+    get new_job_application_path(jobs(:first_officer))
+    assert_redirected_to job_path(jobs(:first_officer))
   end
 
   test "recruiter cannot apply to a job" do

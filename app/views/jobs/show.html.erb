@@ -22,7 +22,13 @@
             data: { turbo_confirm: "Delete this job posting?" } %>
     </div>
   <% elsif logged_in? && current_user.candidate? %>
-    <%= link_to "Apply now", new_job_application_path(@job), class: "btn" %>
+    <% if @existing_application %>
+      <p class="applied-status">
+        &#10003; You applied &middot; Status: <span class="badge"><%= @existing_application.status.titleize %></span>
+      </p>
+    <% else %>
+      <%= link_to "Apply now", new_job_application_path(@job), class: "btn" %>
+    <% end %>
   <% elsif !logged_in? %>
     <p><%= link_to "Log in", login_path, class: "btn btn-secondary btn-sm" %> as a candidate to apply.</p>
   <% end %>

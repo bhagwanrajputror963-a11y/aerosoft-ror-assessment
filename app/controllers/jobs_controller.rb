@@ -9,6 +9,7 @@ class JobsController < ApplicationController
   end
 
   def show
+    @existing_application = current_user.candidate.applications.find_by(job: @job) if logged_in? && current_user.candidate?
   end
 
   def new
