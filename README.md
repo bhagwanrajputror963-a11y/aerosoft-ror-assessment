@@ -102,6 +102,16 @@ This builds the dev image, starts Postgres, runs `bin/rails db:prepare`
 (creates the database, migrates, and seeds it on first run), and starts the
 Rails server on **http://localhost:3000**.
 
+**You should never need to restart the container after this.** Code
+changes (models, controllers, views) hot-reload per-request, same as
+running Rails without Docker. Config/initializer and Gemfile changes are
+handled too — `bin/dev-watch` runs alongside Puma inside the container and
+watches `config/`, `Gemfile`, and `Gemfile.lock`; it runs `bundle install`
+when needed and restarts Puma (via its `tmp_restart` plugin) automatically.
+Edit anything, anywhere, save it — it's live within a couple of seconds.
+The only time you actually need `docker compose build` is a change to
+`Dockerfile.dev` itself (a new apt package, a different Ruby version).
+
 Seeded demo accounts (password `password123` for all):
 
 | Role      | Email                        |
