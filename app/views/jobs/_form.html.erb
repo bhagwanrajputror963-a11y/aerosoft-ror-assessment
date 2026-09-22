@@ -1,0 +1,46 @@
+<% if job.errors.any? %>
+  <div class="error-list">
+    <strong><%= pluralize(job.errors.count, "error") %> prevented this job from saving:</strong>
+    <ul>
+      <% job.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: job, local: true do |f| %>
+  <div class="field">
+    <%= f.label :title %>
+    <%= f.text_field :title %>
+  </div>
+  <div class="field">
+    <%= f.label :description %>
+    <%= f.text_area :description, rows: 5 %>
+  </div>
+  <div class="field">
+    <%= f.label :location %>
+    <%= f.text_field :location %>
+  </div>
+  <div class="field">
+    <%= f.label :category %>
+    <%= f.text_field :category, placeholder: "e.g. Pilot, Cabin Crew, Ground Staff" %>
+  </div>
+  <div class="field">
+    <%= f.label :job_type %>
+    <%= f.select :job_type, Job.job_types.keys.map { |t| [t.titleize, t] } %>
+  </div>
+  <div class="field">
+    <%= f.label :status %>
+    <%= f.select :status, Job.statuses.keys.map { |t| [t.titleize, t] } %>
+  </div>
+  <div class="field">
+    <%= f.label :salary_min %>
+    <%= f.number_field :salary_min %>
+  </div>
+  <div class="field">
+    <%= f.label :salary_max %>
+    <%= f.number_field :salary_max %>
+  </div>
+  <%= f.submit %>
+<% end %>
