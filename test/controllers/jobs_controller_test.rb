@@ -54,6 +54,16 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
     assert_select %(a[href="#{job_path(jobs(:first_officer))}"][data-turbo-frame="_top"])
   end
 
+  test "the Clear link breaks out of the search-results turbo frame too" do
+    # Same class of bug as the job title links above, different symptom:
+    # Clear was scoped to turbo_frame "jobs_results", so clicking it only
+    # swapped the job cards — the search form (q, location, category,
+    # job_type, min_salary) lives outside that frame and was never reset,
+    # so the input boxes and dropdowns kept showing whatever was typed.
+    get jobs_path
+    assert_select %(a[href="#{jobs_path}"][data-turbo-frame="_top"])
+  end
+
   test "index filters by query params" do
     get jobs_path, params: { location: "Mumbai" }
     assert_match jobs(:cabin_crew).title, response.body
