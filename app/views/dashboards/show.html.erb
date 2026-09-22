@@ -1,3 +1,62 @@
 <% content_for :title, "Dashboard | Flying Crews" %>
 <h1>Dashboard</h1>
-<p>Welcome, <%= current_user.name %>.</p>
+
+<% case current_user.role %>
+<% when "candidate" %>
+  <h2>Your applications</h2>
+  <% if @applications.empty? %>
+    <p>You haven't applied to any jobs yet. <%= link_to "Browse jobs", jobs_path %>.</p>
+  <% else %>
+    <table>
+      <thead><tr><th>Job</th><th>Company</th><th>Status</th><th>Applied</th></tr></thead>
+      <tbody>
+        <% @applications.each do |app| %>
+          <tr>
+            <td><%= link_to app.job.title, app.job %></td>
+            <td><%= app.job.company.name %></td>
+            <td><span class="badge"><%= app.status.titleize %></span></td>
+            <td><%= app.applied_at&.strftime("%b %d, %Y") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+<% when "recruiter" %>
+  <p><%= link_to "+ Post a new job", new_job_path %></p>
+  <h2>Your job postings</h2>
+  <% if @jobs.empty? %>
+    <p>You haven't posted any jobs yet.</p>
+  <% else %>
+    <% @jobs.each do |job| %>
+      <div class="card">
+        <p class="job-title"><%= link_to job.title, job %></p>
+        <p class="job-meta"><%= job.applications.count %> application(s) &middot; <span class="badge"><%= job.status.titleize %></span></p>
+        <% if job.applications.any? %>
+          <table>
+            <thead><tr><th>Candidate</th><th>Status</th><th>Update</th></tr></thead>
+            <tbody>
+              <% job.applications.each do |app| %>
+                <tr>
+                  <td><%= app.candidate.user.name %></td>
+                  <td><span class="badge"><%= app.status.titleize %></span></td>
+                  <td>
+                    <%= form_with url: update_status_application_path(app), method: :patch, local: true do |f| %>
+                      <%= select_tag :status, options_for_select(Application.statuses.keys.map { |s| [s.titleize, s] }, app.status), onchange: "this.form.requestSubmit()" %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+<% when "admin" %>
+  <div class="card"><strong>Jobs posted:</strong> <%= @jobs_count %></div>
+  <div class="card"><strong>Applications submitted:</strong> <%= @applications_count %></div>
+  <div class="card"><strong>Companies:</strong> <%= @companies_count %></div>
+  <div class="card"><strong>Candidates:</strong> <%= @candidates_count %></div>
+<% end %>
