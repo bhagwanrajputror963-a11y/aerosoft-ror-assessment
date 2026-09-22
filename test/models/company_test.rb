@@ -23,4 +23,11 @@ class CompanyTest < ActiveSupport::TestCase
     assert_not company.valid?
     assert_includes company.errors[:website], "is invalid"
   end
+
+  test "destroying a company destroys its jobs" do
+    company = companies(:indigo)
+    assert_difference("Job.count", -company.jobs.count) do
+      company.destroy
+    end
+  end
 end
