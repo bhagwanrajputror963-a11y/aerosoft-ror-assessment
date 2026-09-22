@@ -182,11 +182,17 @@ end
 
 # --- Applications: give the demo candidates and recruiters something to review ---
 
-published_jobs = Job.active.to_a
 application_statuses = %i[ submitted submitted under_review shortlisted rejected hired ] # weighted toward submitted/under_review
 
 candidates.each do |candidate|
-  published_jobs.sample(rand(3..6)).each do |job|
+  # Re-queried fresh per candidate, not hoisted above the loop: a "hired"
+  # status assigned below closes its job (Application#close_job_if_hired),
+  # which would otherwise leave a stale pre-computed pool offering an
+  # already-closed job to the next candidate and failing Application's
+  # job_must_be_open validation. .order(:id) also keeps .sample's picks
+  # reproducible across runs (srand alone doesn't help if the underlying
+  # row order isn't stable).
+  Job.active.order(:id).to_a.sample(rand(3..6)).each do |job|
     Application.find_or_create_by!(job: job, candidate: candidate) do |a|
       a.status = application_statuses.sample
       a.cover_letter = "I'm very interested in the #{job.title} role at #{job.company.name} and believe my background is a strong fit."
