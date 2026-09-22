@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Runs alongside Puma in the dev container. app/, views, routes, lib, db/seeds
+# already hot-reload per-request via Rails' own code reloader (config.enable_reloading
+# = true) — nothing to do there. What Rails does NOT reload on its own is anything
+# read once at boot: config/initializers, config/environments/*.rb, and gems. This
+# watches those and reacts automatically, so nobody ever has to remember to run
+# `docker compose restart` (or even `touch tmp/restart.txt`) by hand.
+set -euo pipefail
+
+mkdir -p tmp/pids
+
+echo "[dev-watch] watching config/, Gemfile, Gemfile.lock for changes..."
+
+inotifywait -m -r -e close_write,create,delete,move \
+  --format '%w%f' \
+  config Gemfile Gemfile.lock 2>/dev/null |
+  while read -r changed; do
+    # Small debounce: editors often fire several events per save (write + rename).
+    sleep 0.3
+
+    if [[ "$changed" == *Gemfile* ]]; then
+      echo "[dev-watch] $changed changed — checking gems..."
+      if ! bundle check > /dev/null 2>&1; then
+        echo "[dev-watch] running bundle install..."
+        bundle install || { echo "[dev-watch] bundle install failed, not restarting"; continue; }
+      fi
+    else
+      echo "[dev-watch] $changed changed"
+    fi
+
+    echo "[dev-watch] restarting Rails (Puma's tmp_restart plugin)..."
+    touch tmp/restart.txt
+  done
