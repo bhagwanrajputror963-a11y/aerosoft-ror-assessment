@@ -349,7 +349,55 @@ DB).
 
 ---
 
-## 8. Commit history
+## 8. Indexing, caching, and N+1 audit
+
+Requested explicitly during review — a self-audit of the things that
+usually rot silently in a Rails app, with what was actually found and
+fixed (not a generic checklist):
+
+**Missing indexes** — `jobs` already had indexes on `location`, `category`,
+`status`, and `title` from the start. The audit found three that were
+missing: `companies.name`, `recruiters.user_id`, and `candidates.user_id`
+were unique **only** via a Rails `validates uniqueness: true` — a
+SELECT-then-INSERT check in Ruby with a real race window under concurrent
+requests. All three are now backed by real unique DB indexes, with a test
+(`company_test.rb`) that proves the DB rejects a duplicate even with Rails
+validation bypassed entirely.
+
+**N+1 queries** — two real ones, both now fixed:
+- `JobsController#index` rendered `job.company.name` per row with no
+  `.includes(:company)`.
+- The recruiter dashboard called `job.applications.count` (always hits the
+  DB) instead of `.size`, despite already eager-loading `applications`, and
+  never eager-loaded `application.candidate.user` at all.
+
+Added **Bullet** (development + test) so this class of bug gets caught
+automatically going forward: it logs N+1s and unused eager loads in
+development, and **raises in the test suite**, so a regression fails CI
+instead of showing up as a slow page in production later.
+
+**Caching** — Solid Cache was already configured for production but
+nothing used it. Added Russian-doll fragment caching to the job board's
+job cards (`app/views/jobs/_job_card.html.erb`), keyed on
+`[job, job.company]` — not just `job` — since the card also renders
+`company.name`, which isn't part of `job`'s own `updated_at`. This was
+verified with an actual negative control, not just a happy-path test:
+the regression test (`jobs_controller_test.rb`) was confirmed to fail
+when the cache key was job-only, then confirmed to pass once company was
+added to the key.
+
+**CI** — while auditing, found the generated `.github/workflows/ci.yml`
+still had no database service for the `test`/`system-test` jobs (a
+leftover from the SQLite scaffold, never updated after the Postgres
+migration). CI has been unable to actually run the test suite. Fixed with
+a `postgres:16-alpine` service block.
+
+**Known, deliberately-undone gap:** `salary_at_least` still compares raw
+numbers across currencies with no FX conversion (see §1). Flagged rather
+than silently left in, since fixing it properly needs a normalized
+comparison column, not a quick patch.
+
+## 9. Commit history
 
 The git history is organized as small, feature-scoped commits, each
 shipping its own tests (`git log --oneline` in this repo). Notably, the
@@ -358,7 +406,7 @@ is a real TDD catch: the regression test was written and confirmed failing
 against the original `dependent: :nullify` association *before* the fix was
 written — not a hypothetical.
 
-## 9. What's not included
+## 10. What's not included
 
 Per the assessment's scope, this covers one full vertical slice (jobs +
 applications) rather than the other eight listed projects. Screenshots/demo
