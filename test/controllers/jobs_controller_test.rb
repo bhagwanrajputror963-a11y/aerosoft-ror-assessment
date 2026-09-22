@@ -8,6 +8,18 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match jobs(:draft_job).title, response.body
   end
 
+  test "job title links break out of the search-results turbo frame" do
+    # Job cards render inside turbo_frame_tag("jobs_results") for live search.
+    # Without data-turbo-frame="_top" on the title link, clicking a job from
+    # the board scopes navigation to that frame — but jobs/show has no
+    # matching <turbo-frame id="jobs_results">, so Turbo shows "Content
+    # missing" instead of the job page. This only reproduces in a real
+    # browser (Turbo is client-side JS); this test locks down the
+    # server-side half of the fix: the attribute itself must be present.
+    get jobs_path
+    assert_select %(a[href="#{job_path(jobs(:first_officer))}"][data-turbo-frame="_top"])
+  end
+
   test "index filters by query params" do
     get jobs_path, params: { location: "Mumbai" }
     assert_match jobs(:cabin_crew).title, response.body

@@ -3,7 +3,7 @@
     every one of its jobs' cached cards, not just on the job's own change. %>
 <% cache [ job, job.company ] do %>
   <div class="card">
-    <p class="job-title"><%= link_to job.title, job %></p>
+    <p class="job-title"><%= link_to job.title, job, data: { turbo_frame: "_top" } %></p>
     <p class="job-meta"><%= job.company.name %> &middot; <%= job.location %> &middot; posted <%= time_ago_in_words(job.posted_at || job.created_at) %> ago</p>
     <span class="badge"><%= job.job_type.titleize %></span>
     <% if job.category.present? %><span class="badge"><%= Job::CATEGORY_LABELS[job.category] %></span><% end %>
