@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_22_084432) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_084433) do
   create_table "candidates", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "experience_years"
@@ -29,6 +29,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_084432) do
     t.string "name"
     t.datetime "updated_at", null: false
     t.string "website"
+  end
+
+  create_table "jobs", force: :cascade do |t|
+    t.string "category"
+    t.integer "company_id", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.integer "job_type"
+    t.string "location"
+    t.datetime "posted_at"
+    t.integer "recruiter_id", null: false
+    t.integer "salary_max"
+    t.integer "salary_min"
+    t.integer "status"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.index ["category"], name: "index_jobs_on_category"
+    t.index ["company_id"], name: "index_jobs_on_company_id"
+    t.index ["location"], name: "index_jobs_on_location"
+    t.index ["recruiter_id"], name: "index_jobs_on_recruiter_id"
+    t.index ["status"], name: "index_jobs_on_status"
+    t.index ["title"], name: "index_jobs_on_title"
   end
 
   create_table "recruiters", force: :cascade do |t|
@@ -52,6 +74,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_084432) do
   end
 
   add_foreign_key "candidates", "users"
+  add_foreign_key "jobs", "companies"
+  add_foreign_key "jobs", "recruiters"
   add_foreign_key "recruiters", "companies"
   add_foreign_key "recruiters", "users"
 end
