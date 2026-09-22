@@ -11,12 +11,12 @@
   <%= select_tag :category, options_for_select(Job::CATEGORY_LABELS.map { |key, label| [label, key] }, params[:category]), include_blank: "Any category" %>
   <%= select_tag :job_type, options_for_select(Job.job_types.keys.map { |t| [t.titleize, t] }, params[:job_type]), include_blank: "Any type" %>
   <%= number_field_tag :min_salary, params[:min_salary], placeholder: "Min salary" %>
-  <%= submit_tag "Search" %>
-  <%= link_to "Clear", jobs_path, data: { turbo_frame: "jobs_results" } %>
+  <%= submit_tag "Search", class: "btn" %>
+  <%= link_to "Clear", jobs_path, class: "btn btn-secondary", data: { turbo_frame: "jobs_results" } %>
 <% end %>
 
 <% if logged_in? && current_user.recruiter? %>
-  <p><%= link_to "+ Post a new job", new_job_path %></p>
+  <p><%= link_to "+ Post a new job", new_job_path, class: "btn" %></p>
 <% end %>
 
 <%= turbo_frame_tag "jobs_results" do %>
@@ -25,4 +25,6 @@
   <% end %>
 
   <%= render partial: "job_card", collection: @jobs, as: :job %>
+
+  <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
 <% end %>

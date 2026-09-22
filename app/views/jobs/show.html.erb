@@ -16,11 +16,14 @@
   <p><%= simple_format(@job.description) %></p>
 
   <% if logged_in? && current_user.recruiter? && current_user.recruiter.id == @job.recruiter_id %>
-    <%= link_to "Edit", edit_job_path(@job) %>
-    <%= button_to "Delete", job_path(@job), method: :delete, data: { turbo_confirm: "Delete this job posting?" } %>
+    <div class="actions">
+      <%= link_to "Edit", edit_job_path(@job), class: "btn btn-secondary" %>
+      <%= button_to "Delete", job_path(@job), method: :delete, class: "btn btn-danger",
+            data: { turbo_confirm: "Delete this job posting?" } %>
+    </div>
   <% elsif logged_in? && current_user.candidate? %>
-    <%= link_to "Apply now", new_job_application_path(@job) %>
+    <%= link_to "Apply now", new_job_application_path(@job), class: "btn" %>
   <% elsif !logged_in? %>
-    <p><%= link_to "Log in", login_path %> as a candidate to apply.</p>
+    <p><%= link_to "Log in", login_path, class: "btn btn-secondary btn-sm" %> as a candidate to apply.</p>
   <% end %>
 </div>

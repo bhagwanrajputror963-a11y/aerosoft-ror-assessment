@@ -28,6 +28,19 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
     assert_match '<turbo-frame id="jobs_results"', response.body
   end
 
+  test "index paginates and renders real pagination markup, not HTML-escaped text" do
+    # Pagy's nav helpers return a plain (unmarked) HTML string by design, not
+    # an html_safe SafeBuffer — <%= %> would escape it into literal
+    # "&lt;nav...&gt;" text on the page. Needs <%== %> (raw output) instead.
+    13.times { |n| create_published_job("Extra Job #{n}") }
+
+    get jobs_path
+    assert_response :success
+    assert_match '<nav class="pagy-bootstrap nav"', response.body
+    assert_no_match "&lt;nav", response.body
+    assert_match 'href="/jobs?page=2"', response.body
+  end
+
   test "show displays a single job" do
     get job_path(jobs(:first_officer))
     assert_response :success
@@ -117,5 +130,14 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
       get jobs_path
       assert_match "Renamed Airlines", response.body
     end
+  end
+
+  private
+
+  def create_published_job(title)
+    recruiters(:priya).jobs.create!(
+      company: companies(:indigo), title: title, description: "x", location: "Delhi, India",
+      category: :ground_staff, job_type: :full_time, status: :published, posted_at: Time.current
+    )
   end
 end
