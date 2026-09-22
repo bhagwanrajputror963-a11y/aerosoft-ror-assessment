@@ -10,7 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_22_084421) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_084432) do
+  create_table "candidates", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "experience_years"
+    t.string "headline"
+    t.string "resume_url"
+    t.text "skills"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_candidates_on_user_id"
+  end
+
+  create_table "companies", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "location"
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.string "website"
+  end
+
+  create_table "recruiters", force: :cascade do |t|
+    t.integer "company_id", null: false
+    t.datetime "created_at", null: false
+    t.string "position"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["company_id"], name: "index_recruiters_on_company_id"
+    t.index ["user_id"], name: "index_recruiters_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email"
@@ -20,4 +50,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_084421) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
   end
+
+  add_foreign_key "candidates", "users"
+  add_foreign_key "recruiters", "companies"
+  add_foreign_key "recruiters", "users"
 end
