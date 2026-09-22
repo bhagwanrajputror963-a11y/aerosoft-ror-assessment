@@ -79,6 +79,21 @@ class JobTest < ActiveSupport::TestCase
     assert_not_includes results, jobs(:cabin_crew)
   end
 
+  test "title and location search is case-insensitive" do
+    # Regression: plain SQL LIKE is case-sensitive on Postgres (unlike
+    # SQLite/MySQL's default collation), so a lowercase query like "delhi"
+    # silently matched nothing against "Delhi, India" until switched to ILIKE.
+    assert_includes Job.filter(q: "first officer"), jobs(:first_officer)
+    assert_includes Job.filter(q: "FIRST OFFICER"), jobs(:first_officer)
+    assert_includes Job.filter(location: "delhi"), jobs(:first_officer)
+    assert_includes Job.filter(location: "DELHI"), jobs(:first_officer)
+  end
+
+  test "title and location search matches a partial substring, not just a prefix" do
+    assert_includes Job.filter(q: "officer"), jobs(:first_officer)
+    assert_includes Job.filter(location: "india"), jobs(:first_officer)
+  end
+
   test "filter never returns draft or closed jobs" do
     assert_not_includes Job.filter({}), jobs(:draft_job)
   end

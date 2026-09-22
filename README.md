@@ -50,7 +50,11 @@ implies but hasn't built yet, not a clone of existing functionality.
 
 - Recruiter self-signup (creates or joins a Company) and candidate signup
 - Public job board: search/filter by title, location, category, job type,
-  minimum salary
+  minimum salary. Title/location search is case-insensitive (Postgres
+  `ILIKE`, GIN trigram indexed) and live: a Stimulus controller
+  (`live_search_controller.js`) auto-submits the form via a Turbo Frame
+  once a field has 3+ characters (debounced 400ms), or immediately when
+  cleared back to empty
 - Recruiter CRUD on their own job postings (ownership-checked)
 - Candidate apply flow with a cover letter, one application per job
 - Recruiter applicant pipeline: submitted → under_review → shortlisted /

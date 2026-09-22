@@ -14,6 +14,20 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match jobs(:first_officer).title, response.body
   end
 
+  test "index filters case-insensitively, matching what the live-search JS sends on keyup" do
+    get jobs_path, params: { location: "delhi" }
+    assert_match jobs(:first_officer).title, response.body
+    assert_no_match jobs(:cabin_crew).title, response.body
+  end
+
+  test "a turbo-frame-scoped request (what live search actually issues) still returns filtered results" do
+    get jobs_path, params: { q: "cabin" }, headers: { "Turbo-Frame" => "jobs_results" }
+    assert_response :success
+    assert_match jobs(:cabin_crew).title, response.body
+    assert_no_match jobs(:first_officer).title, response.body
+    assert_match '<turbo-frame id="jobs_results"', response.body
+  end
+
   test "show displays a single job" do
     get job_path(jobs(:first_officer))
     assert_response :success

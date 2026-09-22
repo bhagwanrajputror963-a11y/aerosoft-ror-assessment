@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_22_093634) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_095306) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
 
   create_table "applications", force: :cascade do |t|
     t.datetime "applied_at"
@@ -65,10 +66,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_093634) do
     t.datetime "updated_at", null: false
     t.index ["category"], name: "index_jobs_on_category"
     t.index ["company_id"], name: "index_jobs_on_company_id"
-    t.index ["location"], name: "index_jobs_on_location"
+    t.index ["location"], name: "index_jobs_on_location", opclass: :gin_trgm_ops, using: :gin
     t.index ["recruiter_id"], name: "index_jobs_on_recruiter_id"
     t.index ["status"], name: "index_jobs_on_status"
-    t.index ["title"], name: "index_jobs_on_title"
+    t.index ["title"], name: "index_jobs_on_title", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "recruiters", force: :cascade do |t|
