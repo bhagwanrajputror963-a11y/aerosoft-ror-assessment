@@ -59,7 +59,9 @@ implies but hasn't built yet, not a clone of existing functionality.
 - Recruiter CRUD on their own job postings (ownership-checked)
 - Candidate apply flow with a cover letter, one application per job
 - Recruiter applicant pipeline: submitted → under_review → shortlisted /
-  rejected / hired
+  rejected / hired. Marking someone hired auto-closes the job (one opening
+  per job) and blocks further applications to it; a candidate's own applied
+  status still shows on a since-closed job — it's their result, not a stale CTA
 - Role-based dashboards (candidate / recruiter / admin)
 - JSON API: job search (`/api/v1/jobs`) and apply (`/api/v1/applications`)
 
