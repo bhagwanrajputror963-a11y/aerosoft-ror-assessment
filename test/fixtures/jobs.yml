@@ -1,0 +1,38 @@
+first_officer:
+  company: indigo
+  recruiter: priya
+  title: First Officer - Airbus A320
+  description: Seeking a qualified First Officer for our A320 fleet based in Delhi.
+  location: Delhi, India
+  category: Pilot
+  job_type: full_time
+  salary_min: 1200000
+  salary_max: 2000000
+  status: published
+  posted_at: <%= 1.day.ago %>
+
+cabin_crew:
+  company: indigo
+  recruiter: priya
+  title: Cabin Crew - International Routes
+  description: Join our cabin crew team flying international long-haul routes.
+  location: Mumbai, India
+  category: Cabin Crew
+  job_type: full_time
+  salary_min: 500000
+  salary_max: 800000
+  status: published
+  posted_at: <%= 2.days.ago %>
+
+draft_job:
+  company: indigo
+  recruiter: priya
+  title: Ground Ops Supervisor (Draft)
+  description: Not yet published.
+  location: Delhi, India
+  category: Ground Staff
+  job_type: contract
+  salary_min: 600000
+  salary_max: 900000
+  status: draft
+  posted_at: <%= 1.day.ago %>
