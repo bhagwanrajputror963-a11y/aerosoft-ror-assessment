@@ -1,0 +1,45 @@
+<% content_for :title, "Sign up | Flying Crews" %>
+<h1>Sign up</h1>
+
+<% if @user.errors.any? %>
+  <div class="error-list">
+    <strong><%= pluralize(@user.errors.count, "error") %> prevented sign up:</strong>
+    <ul>
+      <% @user.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: @user, url: signup_path, local: true do |f| %>
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :email %>
+    <%= f.email_field :email %>
+  </div>
+  <div class="field">
+    <%= f.label :password %>
+    <%= f.password_field :password %>
+  </div>
+  <div class="field">
+    <%= f.label :password_confirmation %>
+    <%= f.password_field :password_confirmation %>
+  </div>
+  <div class="field">
+    <%= f.label :role %>
+    <%= f.select :role, [["Candidate (job seeker)", "candidate"], ["Recruiter (hiring)", "recruiter"]] %>
+  </div>
+  <div class="field">
+    <%= label_tag :company_name, "Company name (recruiters only)" %>
+    <%= text_field_tag :company_name %>
+  </div>
+  <div class="field">
+    <%= label_tag :position, "Your position (recruiters only)" %>
+    <%= text_field_tag :position %>
+  </div>
+  <%= f.submit "Create account" %>
+<% end %>

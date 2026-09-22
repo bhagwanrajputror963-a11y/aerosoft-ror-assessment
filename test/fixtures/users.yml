@@ -1,0 +1,23 @@
+recruiter_one:
+  name: Priya Sharma
+  email: recruiter@example.com
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  role: recruiter
+
+candidate_one:
+  name: Arjun Mehta
+  email: candidate@example.com
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  role: candidate
+
+candidate_two:
+  name: Rina Kapoor
+  email: rina@example.com
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  role: candidate
+
+admin_one:
+  name: Site Admin
+  email: admin@example.com
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  role: admin
