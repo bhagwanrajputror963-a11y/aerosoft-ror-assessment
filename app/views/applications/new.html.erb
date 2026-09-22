@@ -1,0 +1,21 @@
+<% content_for :title, "Apply | #{@job.title}" %>
+<h1>Apply to <%= @job.title %></h1>
+<p class="job-meta"><%= @job.company.name %> &middot; <%= @job.location %></p>
+
+<% if @application.errors.any? %>
+  <div class="error-list">
+    <ul>
+      <% @application.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: @application, url: job_applications_path(@job), local: true do |f| %>
+  <div class="field">
+    <%= f.label :cover_letter %>
+    <%= f.text_area :cover_letter, rows: 6, placeholder: "Tell the recruiter why you're a great fit..." %>
+  </div>
+  <%= f.submit "Submit application" %>
+<% end %>

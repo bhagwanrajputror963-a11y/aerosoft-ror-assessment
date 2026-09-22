@@ -18,5 +18,9 @@
   <% if logged_in? && current_user.recruiter? && current_user.recruiter.id == @job.recruiter_id %>
     <%= link_to "Edit", edit_job_path(@job) %>
     <%= button_to "Delete", job_path(@job), method: :delete, data: { turbo_confirm: "Delete this job posting?" } %>
+  <% elsif logged_in? && current_user.candidate? %>
+    <%= link_to "Apply now", new_job_application_path(@job) %>
+  <% elsif !logged_in? %>
+    <p><%= link_to "Log in", login_path %> as a candidate to apply.</p>
   <% end %>
 </div>
