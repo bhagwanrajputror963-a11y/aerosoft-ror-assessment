@@ -77,4 +77,31 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
       delete job_path(jobs(:cabin_crew))
     end
   end
+
+  test "job card fragment cache invalidates when the job changes" do
+    with_fragment_caching do
+      job = jobs(:first_officer)
+
+      get jobs_path
+      assert_match job.title, response.body
+
+      job.update!(title: "Captain - Airbus A320")
+
+      get jobs_path
+      assert_match "Captain - Airbus A320", response.body
+      assert_no_match "First Officer - Airbus A320", response.body
+    end
+  end
+
+  test "job card fragment cache invalidates when the company changes (touch: true)" do
+    with_fragment_caching do
+      get jobs_path
+      assert_match companies(:indigo).name, response.body
+
+      companies(:indigo).update!(name: "Renamed Airlines")
+
+      get jobs_path
+      assert_match "Renamed Airlines", response.body
+    end
+  end
 end
