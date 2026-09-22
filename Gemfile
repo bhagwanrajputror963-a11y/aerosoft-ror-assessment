@@ -21,7 +21,7 @@ gem "stimulus-rails"
 gem "jbuilder"
 
 # Lightweight, fast pagination — no monkey patching [https://github.com/ddnexus/pagy]
-gem "pagy", "~> 9.0"
+gem "pagy", "~> 43.6"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bcrypt", "~> 3.1.7"
