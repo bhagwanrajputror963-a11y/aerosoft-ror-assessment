@@ -20,6 +20,28 @@ module SignInHelper
   end
 end
 
+module FragmentCachingHelper
+  # Fragment caching is off in the test env by default (no-op cache store),
+  # so a test that wants to prove real caching + invalidation behavior
+  # needs to opt into a real store for the duration of the block.
+  def with_fragment_caching
+    original_store = ActionController::Base.cache_store
+    original_perform_caching = ActionController::Base.perform_caching
+
+    store = ActiveSupport::Cache::MemoryStore.new
+    ActionController::Base.cache_store = store
+    ApplicationController.cache_store = store
+    ActionController::Base.perform_caching = true
+
+    yield
+  ensure
+    ActionController::Base.cache_store = original_store
+    ApplicationController.cache_store = original_store
+    ActionController::Base.perform_caching = original_perform_caching
+  end
+end
+
 class ActionDispatch::IntegrationTest
   include SignInHelper
+  include FragmentCachingHelper
 end
