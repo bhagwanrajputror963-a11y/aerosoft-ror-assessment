@@ -8,7 +8,7 @@ gem "propshaft"
 gem "pg", "~> 1.5"
 # Pinned: json 3.x breaks ActiveSupport's JSON.parse(str, opts) call used for
 # encrypted cookie/session decoding (json 3.0.2 dropped the 2-arg signature).
-gem "json", "~> 2.7"
+gem "json", "~> 3.0"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
