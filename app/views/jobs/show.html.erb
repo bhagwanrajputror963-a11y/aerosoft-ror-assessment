@@ -21,14 +21,16 @@
       <%= button_to "Delete", job_path(@job), method: :delete, class: "btn btn-danger",
             data: { turbo_confirm: "Delete this job posting?" } %>
     </div>
+  <% elsif @existing_application %>
+    <%# Always show the candidate's own status, even if the job has since
+        closed (e.g. someone else was hired) — this isn't a new-applicant CTA. %>
+    <p class="applied-status">
+      &#10003; You applied &middot; Status: <span class="badge"><%= @existing_application.status.titleize %></span>
+    </p>
+  <% elsif !@job.published? %>
+    <p class="job-meta">This job is no longer accepting applications.</p>
   <% elsif logged_in? && current_user.candidate? %>
-    <% if @existing_application %>
-      <p class="applied-status">
-        &#10003; You applied &middot; Status: <span class="badge"><%= @existing_application.status.titleize %></span>
-      </p>
-    <% else %>
-      <%= link_to "Apply now", new_job_application_path(@job), class: "btn" %>
-    <% end %>
+    <%= link_to "Apply now", new_job_application_path(@job), class: "btn" %>
   <% elsif !logged_in? %>
     <p><%= link_to "Log in", login_path, class: "btn btn-secondary btn-sm" %> as a candidate to apply.</p>
   <% end %>

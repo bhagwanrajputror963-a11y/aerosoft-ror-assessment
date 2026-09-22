@@ -32,4 +32,45 @@ class ApplicationTest < ActiveSupport::TestCase
     application.update!(status: :shortlisted)
     assert application.shortlisted?
   end
+
+  test "moving an application to hired closes the job" do
+    application = applications(:arjun_applies_first_officer)
+    assert application.job.published?
+
+    application.update!(status: :hired)
+
+    assert application.job.reload.closed?
+  end
+
+  test "moving an application to any other status does not close the job" do
+    application = applications(:arjun_applies_first_officer)
+
+    application.update!(status: :shortlisted)
+
+    assert application.job.reload.published?
+  end
+
+  test "hiring for an already-closed job does not error" do
+    application = applications(:arjun_applies_first_officer)
+    application.job.update!(status: :closed)
+
+    assert_nothing_raised { application.update!(status: :hired) }
+    assert application.job.reload.closed?
+  end
+
+  test "invalid to apply to a job that is not published" do
+    application = Application.new(job: jobs(:draft_job), candidate: candidates(:rina))
+
+    assert_not application.valid?
+    assert_includes application.errors[:job], "is not accepting applications"
+  end
+
+  test "existing application is unaffected when the job later closes" do
+    # on: :create only — an application already on file for a job must
+    # survive that job closing (e.g. because someone else got hired).
+    application = applications(:arjun_applies_first_officer)
+    application.job.update!(status: :closed)
+
+    assert application.reload.valid?
+  end
 end
