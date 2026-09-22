@@ -12,7 +12,12 @@
   <%= select_tag :job_type, options_for_select(Job.job_types.keys.map { |t| [t.titleize, t] }, params[:job_type]), include_blank: "Any type" %>
   <%= number_field_tag :min_salary, params[:min_salary], placeholder: "Min salary" %>
   <%= submit_tag "Search", class: "btn" %>
-  <%= link_to "Clear", jobs_path, class: "btn btn-secondary", data: { turbo_frame: "jobs_results" } %>
+  <%# _top, not jobs_results: Clear must reset the search FORM (q, location,
+      category, job_type, min_salary), which lives outside the results
+      frame. A frame-scoped navigation only swaps the job cards — the input
+      boxes and selects still showed whatever was typed before Clear was
+      clicked, because nothing ever told them to reset. %>
+  <%= link_to "Clear", jobs_path, class: "btn btn-secondary", data: { turbo_frame: "_top" } %>
 <% end %>
 
 <% if logged_in? && current_user.recruiter? %>
