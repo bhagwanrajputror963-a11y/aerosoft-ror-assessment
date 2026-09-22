@@ -54,7 +54,8 @@ implies but hasn't built yet, not a clone of existing functionality.
   `ILIKE`, GIN trigram indexed) and live: a Stimulus controller
   (`live_search_controller.js`) auto-submits the form via a Turbo Frame
   once a field has 3+ characters (debounced 400ms), or immediately when
-  cleared back to empty
+  cleared back to empty. Results and dashboards are paginated (Pagy,
+  12/page)
 - Recruiter CRUD on their own job postings (ownership-checked)
 - Candidate apply flow with a cover letter, one application per job
 - Recruiter applicant pipeline: submitted → under_review → shortlisted /
