@@ -35,6 +35,10 @@
     <%= f.select :status, Job.statuses.keys.map { |t| [t.titleize, t] } %>
   </div>
   <div class="field">
+    <%= f.label :currency %>
+    <%= f.select :currency, Job.currencies.keys.map { |c| [c.upcase, c] } %>
+  </div>
+  <div class="field">
     <%= f.label :salary_min %>
     <%= f.number_field :salary_min %>
   </div>

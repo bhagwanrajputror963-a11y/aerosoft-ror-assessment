@@ -26,8 +26,8 @@
     <p class="job-meta"><%= job.company.name %> &middot; <%= job.location %> &middot; posted <%= time_ago_in_words(job.posted_at || job.created_at) %> ago</p>
     <span class="badge"><%= job.job_type.titleize %></span>
     <% if job.category.present? %><span class="badge"><%= Job::CATEGORY_LABELS[job.category] %></span><% end %>
-    <% if job.salary_min || job.salary_max %>
-      <span class="badge">₹<%= job.salary_min %> - ₹<%= job.salary_max %></span>
+    <% if job.formatted_salary_range %>
+      <span class="badge"><%= job.formatted_salary_range %></span>
     <% end %>
   </div>
 <% end %>
