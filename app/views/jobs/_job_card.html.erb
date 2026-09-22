@@ -1,8 +1,9 @@
-<%# The card renders job.company.name, which isn't part of job's own
-    cache key — include company explicitly so renaming a company busts
-    every one of its jobs' cached cards, not just on the job's own change. %>
-<% cache [ job, job.company ] do %>
-  <div class="card">
+<%# Only the user-independent content is cached — the applied-status badge
+    below is per-viewing-candidate and must render fresh every request.
+    Caching it inside [job, job.company] would leak one candidate's applied
+    status onto every other viewer of the same job card. %>
+<div class="card">
+  <% cache [ job, job.company ] do %>
     <p class="job-title"><%= link_to job.title, job, data: { turbo_frame: "_top" } %></p>
     <p class="job-meta"><%= job.company.name %> &middot; <%= job.location %> &middot; posted <%= time_ago_in_words(job.posted_at || job.created_at) %> ago</p>
     <span class="badge"><%= job.job_type.titleize %></span>
@@ -10,5 +11,8 @@
     <% if job.formatted_salary_range %>
       <span class="badge"><%= job.formatted_salary_range %></span>
     <% end %>
-  </div>
-<% end %>
+  <% end %>
+  <% if (status = (local_assigns[:applied_job_statuses] || {})[job.id]) %>
+    <span class="badge badge-applied">&#10003; Applied &middot; <%= status.titleize %></span>
+  <% end %>
+</div>

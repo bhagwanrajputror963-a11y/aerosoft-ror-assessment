@@ -6,6 +6,7 @@ class JobsController < ApplicationController
 
   def index
     @pagy, @jobs = pagy(Job.filter(search_params).includes(:company))
+    @applied_job_statuses = applied_job_statuses_for(@jobs)
   end
 
   def show
@@ -67,5 +68,15 @@ class JobsController < ApplicationController
 
   def search_params
     params.permit(:q, :location, :category, :job_type, :min_salary)
+  end
+
+  # One query for the whole page, not one per job card — {job_id => status}.
+  def applied_job_statuses_for(jobs)
+    return {} unless logged_in? && current_user.candidate?
+
+    # Not .pluck(:job_id, :status) — status is an enum, and pluck returns the
+    # raw integer, not the cast string label the view expects.
+    current_user.candidate.applications.where(job_id: jobs.map(&:id))
+      .each_with_object({}) { |application, statuses| statuses[application.job_id] = application.status }
   end
 end

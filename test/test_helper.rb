@@ -41,7 +41,19 @@ module FragmentCachingHelper
   end
 end
 
+module JobCardHelper
+  # Scopes an assertion to a single job card's markup, so "does the page
+  # mention Applied anywhere" (too loose when multiple cards are on the
+  # page) becomes "does *this job's* card say Applied".
+  def within_job_card(job)
+    card = Nokogiri::HTML5.fragment(response.body).at_css("a[href='#{Rails.application.routes.url_helpers.job_path(job)}']").ancestors(".card").first
+    assert card, "No job card found for #{job.title.inspect} in the response"
+    yield card.to_html
+  end
+end
+
 class ActionDispatch::IntegrationTest
   include SignInHelper
   include FragmentCachingHelper
+  include JobCardHelper
 end
