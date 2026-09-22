@@ -5,17 +5,23 @@ class JobTest < ActiveSupport::TestCase
     job = Job.new(
       company: companies(:indigo), recruiter: recruiters(:priya),
       title: "Flight Dispatcher", description: "Plan and monitor flights.",
-      location: "Delhi, India", job_type: :full_time, status: :published
+      location: "Delhi, India", category: :ground_staff, job_type: :full_time, status: :published
     )
     assert job.valid?
   end
 
-  test "invalid without title, description or location" do
+  test "invalid without title, description, location or category" do
     job = Job.new(company: companies(:indigo), recruiter: recruiters(:priya))
     assert_not job.valid?
     assert_includes job.errors[:title], "can't be blank"
     assert_includes job.errors[:description], "can't be blank"
     assert_includes job.errors[:location], "can't be blank"
+    assert_includes job.errors[:category], "can't be blank"
+  end
+
+  test "category is restricted to flying-crews.com's five listed job types" do
+    assert_equal %w[pilot cabin_crew ame mba ground_staff], Job.categories.keys
+    assert_raises(ArgumentError) { Job.new(category: :flight_attendant) }
   end
 
   test "invalid when salary_max is less than salary_min" do
@@ -40,7 +46,7 @@ class JobTest < ActiveSupport::TestCase
     assert_includes results, jobs(:cabin_crew)
     assert_not_includes results, jobs(:first_officer)
 
-    results = Job.filter(category: "Pilot")
+    results = Job.filter(category: "pilot")
     assert_includes results, jobs(:first_officer)
     assert_not_includes results, jobs(:cabin_crew)
 

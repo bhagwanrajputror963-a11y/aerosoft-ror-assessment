@@ -6,10 +6,18 @@ class Job < ApplicationRecord
 
   enum :job_type, { full_time: 0, part_time: 1, contract: 2, seasonal: 3 }
   enum :status, { draft: 0, published: 1, closed: 2 }
+  # Matches flying-crews.com's five listed job categories.
+  enum :category, { pilot: 0, cabin_crew: 1, ame: 2, mba: 3, ground_staff: 4 }
+
+  CATEGORY_LABELS = {
+    "pilot" => "Pilot", "cabin_crew" => "Cabin Crew", "ame" => "AME (Aircraft Maintenance Engineer)",
+    "mba" => "MBA / Management", "ground_staff" => "Ground Staff"
+  }.freeze
 
   validates :title, presence: true
   validates :description, presence: true
   validates :location, presence: true
+  validates :category, presence: true
   validates :salary_min, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :salary_max, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validate :salary_range_valid

@@ -24,7 +24,7 @@
   </div>
   <div class="field">
     <%= f.label :category %>
-    <%= f.text_field :category, placeholder: "e.g. Pilot, Cabin Crew, Ground Staff" %>
+    <%= f.select :category, Job::CATEGORY_LABELS.map { |key, label| [label, key] } %>
   </div>
   <div class="field">
     <%= f.label :job_type %>

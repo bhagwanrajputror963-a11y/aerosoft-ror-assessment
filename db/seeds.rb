@@ -40,7 +40,7 @@ jobs = [
     title: "First Officer - Airbus A320",
     description: "Seeking a qualified First Officer for our A320 fleet based in Delhi.",
     location: "Delhi, India",
-    category: "Pilot",
+    category: :pilot,
     job_type: :full_time,
     salary_min: 1_200_000,
     salary_max: 2_000_000
@@ -49,7 +49,7 @@ jobs = [
     title: "Cabin Crew - International Routes",
     description: "Join our cabin crew team flying international long-haul routes.",
     location: "Mumbai, India",
-    category: "Cabin Crew",
+    category: :cabin_crew,
     job_type: :full_time,
     salary_min: 500_000,
     salary_max: 800_000
@@ -58,10 +58,28 @@ jobs = [
     title: "Aircraft Maintenance Engineer",
     description: "Licensed AME required for line maintenance on narrow-body aircraft.",
     location: "Bengaluru, India",
-    category: "Ground Staff",
+    category: :ame,
     job_type: :contract,
     salary_min: 700_000,
     salary_max: 1_100_000
+  },
+  {
+    title: "Assistant Manager - Airline Operations",
+    description: "MBA graduate to join our operations management trainee program.",
+    location: "Gurugram, India",
+    category: :mba,
+    job_type: :full_time,
+    salary_min: 800_000,
+    salary_max: 1_400_000
+  },
+  {
+    title: "Ground Staff - Passenger Services",
+    description: "Front-line passenger services and check-in staff at Delhi airport.",
+    location: "Delhi, India",
+    category: :ground_staff,
+    job_type: :full_time,
+    salary_min: 350_000,
+    salary_max: 550_000
   }
 ]
 

@@ -26,7 +26,7 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
       post jobs_path, params: {
         job: {
           title: "Ground Ops Supervisor", description: "Manage ground operations.",
-          location: "Delhi, India", category: "Ground Staff", job_type: "full_time",
+          location: "Delhi, India", category: "ground_staff", job_type: "full_time",
           status: "published", salary_min: 600_000, salary_max: 900_000
         }
       }
