@@ -18,4 +18,8 @@ class CandidateTest < ActiveSupport::TestCase
     assert_not candidate.valid?
     assert_includes candidate.errors[:experience_years], "must be greater than or equal to 0"
   end
+
+  test "jobs are reachable through applications" do
+    assert_includes candidates(:arjun).jobs, jobs(:first_officer)
+  end
 end

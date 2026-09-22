@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_22_084433) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_084435) do
+  create_table "applications", force: :cascade do |t|
+    t.datetime "applied_at"
+    t.integer "candidate_id", null: false
+    t.text "cover_letter"
+    t.datetime "created_at", null: false
+    t.integer "job_id", null: false
+    t.integer "status"
+    t.datetime "updated_at", null: false
+    t.index ["candidate_id"], name: "index_applications_on_candidate_id"
+    t.index ["job_id", "candidate_id"], name: "index_applications_on_job_id_and_candidate_id", unique: true
+    t.index ["job_id"], name: "index_applications_on_job_id"
+  end
+
   create_table "candidates", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "experience_years"
@@ -73,6 +86,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_084433) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "applications", "candidates"
+  add_foreign_key "applications", "jobs"
   add_foreign_key "candidates", "users"
   add_foreign_key "jobs", "companies"
   add_foreign_key "jobs", "recruiters"

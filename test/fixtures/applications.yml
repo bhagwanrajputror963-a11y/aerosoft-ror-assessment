@@ -1,0 +1,6 @@
+arjun_applies_first_officer:
+  job: first_officer
+  candidate: arjun
+  status: submitted
+  cover_letter: I have 5 years of flight experience and would love to join IndiGo.
+  applied_at: <%= 1.hour.ago %>
