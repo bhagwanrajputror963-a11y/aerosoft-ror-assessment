@@ -5,7 +5,7 @@ gem "rails", "~> 8.1.1"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use PostgreSQL as the database for Active Record
-gem "pg", "~> 1.5"
+gem "pg", "~> 1.7"
 # Pinned: json 3.x breaks ActiveSupport's JSON.parse(str, opts) call used for
 # encrypted cookie/session decoding (json 3.0.2 dropped the 2-arg signature).
 gem "json", "~> 2.7"
